@@ -22,12 +22,24 @@ export class KafkaService implements IMessageQueueService {
   }
 
   async initProducer(config?: ProducerConfig) {
+    if (this._producer) {
+      console.warn("producer already initialized");
+
+      return;
+    }
+
     this._producer = this._kafka.producer(config);
 
     await this._producer.connect();
   }
 
   async initConsumer(config?: ConsumerConfig) {
+    if (this._consumer) {
+      console.warn("consumer already initialized");
+
+      return;
+    }
+
     this._consumer = this._kafka.consumer(config);
 
     await this._consumer.connect();

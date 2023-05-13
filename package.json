@@ -1,5 +1,5 @@
 {
-  "name": "common-toolkit",
+  "name": "mvc-common-toolkit",
   "version": "1.0.0",
   "description": "This package contains common toolkits like query string parser, filter parser,... and other reusable patterns for any web projects",
   "main": "dist/index.js",
@@ -30,7 +30,8 @@
     "ali-oss": "^6.17.1",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
-    "exceljs": "^4.3.0"
+    "exceljs": "^4.3.0",
+    "kafkajs": "^2.2.4"
   },
   "devDependencies": {
     "@types/ali-oss": "^6.16.7",

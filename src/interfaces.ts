@@ -1,5 +1,30 @@
 import { Borders, CellValue, Style } from "exceljs";
+import {
+  ConsumerConfig,
+  ConsumerRunConfig,
+  ConsumerSubscribeTopics,
+  ProducerConfig,
+  ProducerRecord,
+} from "kafkajs";
+
 import { LOG_LEVEL } from "./constants";
+
+export interface IMessageQueueService {
+  initProducer(config?: any): Promise<void>;
+  initConsumer(config?: any): Promise<void>;
+  listen(subscribeConfig: any, runConfig: any): Promise<void>;
+  publish(record: any): Promise<void>;
+}
+
+export interface IKafkaService extends IMessageQueueService {
+  initProducer(config?: ProducerConfig): Promise<void>;
+  initConsumer(config?: ConsumerConfig): Promise<void>;
+  listen(
+    subscribeConfig: ConsumerSubscribeTopics,
+    runConfig: ConsumerRunConfig
+  ): Promise<void>;
+  publish(record: ProducerRecord): Promise<void>;
+}
 
 export interface CloudStorageClient {
   generateTmpCredentials(sessionId: string): Promise<any>;

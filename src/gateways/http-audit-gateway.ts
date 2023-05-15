@@ -30,6 +30,10 @@ export class HttpAuditGateway implements AuditGateway {
     level: LOG_LEVEL,
     content: Record<string, any>
   ) {
+    if (!this.access_token) {
+      await this.auth();
+    }
+
     const response = await this.send(logId, {
       method: "POST",
       url: "/event/create",
@@ -69,10 +73,6 @@ export class HttpAuditGateway implements AuditGateway {
     is_retry = false,
     use_access_token = true
   ): Promise<AxiosResponse<T>> {
-    if (!this.access_token) {
-      await this.auth();
-    }
-
     console.log(
       `[${logId}] ${
         is_retry ? "Resend" : "Send"

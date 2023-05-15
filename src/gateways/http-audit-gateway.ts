@@ -25,10 +25,6 @@ export class HttpAuditGateway implements AuditGateway {
     this.baseURL = config.baseUrl;
   }
 
-  async onModuleInit() {
-    await this.auth();
-  }
-
   public async publish(
     logId: string,
     level: LOG_LEVEL,
@@ -46,7 +42,11 @@ export class HttpAuditGateway implements AuditGateway {
     return response?.data;
   }
 
-  private async auth(logId = "system") {
+  private async auth(logId = "system", forceReAuth = false) {
+    if (this.access_token || forceReAuth) {
+      return;
+    }
+
     const authResponse = await this.send<{ access_token: string }>(
       logId,
       {
@@ -69,6 +69,7 @@ export class HttpAuditGateway implements AuditGateway {
     is_retry = false,
     use_access_token = true
   ): Promise<AxiosResponse<T>> {
+    await this.auth();
     console.log(
       `[${logId}] ${
         is_retry ? "Resend" : "Send"
@@ -88,7 +89,7 @@ export class HttpAuditGateway implements AuditGateway {
     if (response?.status == 401 && use_access_token && !is_retry) {
       console.log(`[${logId}] Retrying...`);
 
-      const isAuthSuccess = await this.auth(logId);
+      const isAuthSuccess = await this.auth(logId, true);
 
       if (isAuthSuccess) {
         return this.send(logId, options, true);

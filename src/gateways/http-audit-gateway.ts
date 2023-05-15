@@ -69,7 +69,10 @@ export class HttpAuditGateway implements AuditGateway {
     is_retry = false,
     use_access_token = true
   ): Promise<AxiosResponse<T>> {
-    await this.auth();
+    if (!this.access_token) {
+      await this.auth();
+    }
+
     console.log(
       `[${logId}] ${
         is_retry ? "Resend" : "Send"

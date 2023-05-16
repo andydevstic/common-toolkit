@@ -7,8 +7,19 @@ import {
   ProducerRecord,
 } from "kafkajs";
 
-import { LOG_LEVEL } from "./constants";
+import { FILTER_OPERATOR, LOG_LEVEL, SET_CACHE_POLICY } from "./constants";
 
+export interface CacheService {
+  get(key: string): Promise<any>;
+  set(key: string, value: any, option: SetCacheOption): Promise<any>;
+  incrBy(key: string, value?: number): Promise<any>;
+  decrBy(key: string, value?: number): Promise<any>;
+}
+
+export interface SetCacheOption {
+  policy: SET_CACHE_POLICY;
+  value: any;
+}
 export interface IMessageQueueService {
   initProducer(config?: any): Promise<void>;
   initConsumer(config?: any): Promise<void>;
@@ -31,9 +42,17 @@ export interface CloudStorageClient {
   getObjectReadStream(fileName: string): Promise<any>;
 }
 
+export interface IFilter {
+  field: string;
+  operator: FILTER_OPERATOR;
+  value: any;
+}
+
+export type SORT_DIRECTION = "ASC" | "DESC";
+
 export interface ISort {
   columnName: string;
-  direction: "ASC" | "DESC";
+  direction: SORT_DIRECTION;
 }
 
 export interface EmailSender {

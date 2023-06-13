@@ -28,6 +28,12 @@ export function parseSort(data: string): ISort[] {
   return sortConditions;
 }
 
+/**
+ * Parses filter expression for a field name
+ * @param field The fieldname in query string ?email=
+ * @param filterData The filter expression. Ex: eq:123 lt:100 gt:400
+ * @returns IFilter
+ */
 export function parseFilter(field: string, filterData: string): IFilter {
   if (!filterData) {
     throw new Error("missing filter data");

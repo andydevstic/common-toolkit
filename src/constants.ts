@@ -19,10 +19,14 @@ export enum APP_ENV {
 }
 
 export enum FILTER_OPERATOR {
+  NOT = "not",
   EQUAL = "eq",
   LIKE = "like",
+  INS_LIKE = "ins_like", // case-insensitive
   STARTS_WITH = "starts_with",
   ENDS_WITH = "ends_with",
+  INS_STARTS_WITH = "ins_starts_with", // case-insensitive
+  INS_ENDS_WITH = "ins_ends_with", // case-insensitive
   LESS_THAN = "lt",
   LESS_THAN_OR_EQUAL = "lte",
   GREATER_THAN = "gt",

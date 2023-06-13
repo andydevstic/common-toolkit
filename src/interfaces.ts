@@ -9,6 +9,10 @@ import {
 
 import { FILTER_OPERATOR, LOG_LEVEL, SET_CACHE_POLICY } from "./constants";
 
+export interface SQLRunner {
+  query<T = any>(sql: string, ...args: any[]): Promise<T>;
+}
+
 export interface CacheService {
   get(key: string): Promise<any>;
   set(key: string, value: any, option: SetCacheOption): Promise<any>;

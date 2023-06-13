@@ -16,21 +16,49 @@ export const toSimpleMongooseFilter = (
         };
 
         break;
+
+      case FILTER_OPERATOR.NOT:
+        agg[current.field] = {
+          $ne: current.value,
+        };
+
+        break;
+
       case FILTER_OPERATOR.LIKE:
+        agg[current.field] = {
+          $regex: `.*${current.value}.*`,
+        };
+
+        break;
+
+      case FILTER_OPERATOR.INS_LIKE:
         agg[current.field] = {
           $regex: `.*${current.value}.*`,
           $options: "i",
         };
 
         break;
+
       case FILTER_OPERATOR.STARTS_WITH:
+        agg[current.field] = {
+          $regex: `^${current.value}.*$`,
+        };
+
+        break;
+      case FILTER_OPERATOR.ENDS_WITH:
+        agg[current.field] = {
+          $regex: `.*${current.value}$`,
+        };
+
+        break;
+      case FILTER_OPERATOR.INS_STARTS_WITH:
         agg[current.field] = {
           $regex: `^${current.value}.*$`,
           $options: "i",
         };
 
         break;
-      case FILTER_OPERATOR.ENDS_WITH:
+      case FILTER_OPERATOR.INS_ENDS_WITH:
         agg[current.field] = {
           $regex: `.*${current.value}$`,
           $options: "i",

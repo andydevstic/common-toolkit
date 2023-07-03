@@ -31,6 +31,14 @@ export interface IMessageQueueService {
   publish(record: any): Promise<void>;
 }
 
+export interface HttpResponse<T = any> {
+  success?: boolean;
+  code?: string;
+  httpCode?: number;
+  message?: string;
+  data?: T;
+}
+
 export interface IKafkaService extends IMessageQueueService {
   initProducer(config?: ProducerConfig): Promise<void>;
   initConsumer(config?: ConsumerConfig): Promise<void>;

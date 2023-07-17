@@ -16,8 +16,18 @@ export interface SQLRunner {
 export interface CacheService {
   get(key: string): Promise<any>;
   set(key: string, value: any, option: SetCacheOption): Promise<any>;
+  del(...keys: string[]): Promise<void>;
   incrBy(key: string, value?: number): Promise<any>;
   decrBy(key: string, value?: number): Promise<any>;
+}
+
+export interface LockResult {
+  isLocked: boolean;
+  attemptsLeft: number;
+}
+
+export interface CRUDService<T = any> {
+  findById(userId: any, ...options: any[]): Promise<T>;
 }
 
 export interface SetCacheOption {

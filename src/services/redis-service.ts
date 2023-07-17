@@ -14,6 +14,10 @@ export class RedisService implements CacheService {
     return this._redis.get(key);
   }
 
+  public async del(...keys: string[]): Promise<void> {
+    await this._redis.del(...keys);
+  }
+
   public set(key: string, value: any, option: SetCacheOption): Promise<any> {
     switch (option.policy) {
       case SET_CACHE_POLICY.WITH_TTL:

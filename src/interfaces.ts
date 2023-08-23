@@ -7,10 +7,37 @@ import {
   ProducerRecord,
 } from "kafkajs";
 
-import { FILTER_OPERATOR, LOG_LEVEL, SET_CACHE_POLICY } from "./constants";
+import {
+  FILTER_OPERATOR,
+  HttpMethod,
+  LOG_LEVEL,
+  SET_CACHE_POLICY,
+} from "./constants";
 
 export interface SQLRunner {
   query<T = any>(sql: string, ...args: any[]): Promise<T>;
+}
+
+export interface HttpRequestOption {
+  serviceName?: string;
+  body?: any;
+  query?: any;
+  headers?: Record<string, string>;
+  reqId?: string;
+}
+
+export interface Logger {
+  info(message: string, ...args: any[]): void;
+  error(message: string, ...args: any[]): void;
+  warn(message: string, ...args: any[]): void;
+}
+
+export interface HttpService {
+  send<T = any>(
+    method: HttpMethod,
+    url: string,
+    options: HttpRequestOption
+  ): Promise<OperationResult<T>>;
 }
 
 export interface CacheService {

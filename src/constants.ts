@@ -5,6 +5,12 @@ export enum LOG_LEVEL {
   FATAL = "fatal",
 }
 
+export type HttpMethod = "get" | "post" | "put" | "patch" | "delete";
+
+export enum APP_ERROR {
+  HTTP_REQ_TIMEOUT = "ECONNABORTED",
+}
+
 export enum SET_CACHE_POLICY {
   KEEP_TTL,
   WITH_TTL,

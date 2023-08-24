@@ -1,4 +1,5 @@
 import axios from "axios";
+import { createId } from "@paralleldrive/cuid2";
 
 import { PinoLogger } from "../pkg/logger";
 import { APP_ERROR, HttpMethod } from "../constants";
@@ -8,8 +9,7 @@ import {
   Logger,
   OperationResult,
 } from "../interfaces";
-import { maskSensitiveData } from "src/pkg/http-request-utils";
-import { createId } from "@paralleldrive/cuid2";
+import { maskSensitiveData } from "../pkg/http-request-utils";
 
 export class AxiosHttpService implements HttpService {
   constructor(protected logger: Logger = new PinoLogger()) {}

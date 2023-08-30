@@ -24,6 +24,11 @@ export interface DelayedTaskOps {
   timeout: number;
 }
 
+export interface TaskRescheduleOps {
+  msFromNow?: number;
+  runTime?: Date;
+}
+
 export type DelayFn = (callback: () => void, timeout: number) => Subscription;
 
 export interface ITask {
@@ -35,6 +40,7 @@ export interface ITask {
   cancel(): Promise<void>;
   lastRun(): Promise<Date>;
   nextRun(): Promise<Date>;
+  reschedule(options: TaskRescheduleOps): Promise<void>;
 }
 
 export interface TaskRegistry {

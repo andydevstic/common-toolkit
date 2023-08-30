@@ -2,7 +2,13 @@ import { createId } from "@paralleldrive/cuid2";
 
 import dayjs from "dayjs";
 
-import { DelayFn, DelayedTaskOps, ITask, Subscription } from "../../interfaces";
+import {
+  DelayFn,
+  DelayedTaskOps,
+  ITask,
+  Subscription,
+  TaskRescheduleOps,
+} from "../../interfaces";
 
 const nativeTimeout: DelayFn = (callback, timeout) => {
   const timeoutId = setTimeout(callback, timeout);
@@ -35,19 +41,51 @@ export class DelayedTask implements ITask {
   }
 
   protected _start(): void {
-    this.subscription = this.delayFn(
-      this.options.callback,
-      this.options.timeout
-    );
+    this.subscription = this.delayFn(() => {
+      // run the task
+      this.options.callback();
+
+      // set last run to the moment
+      this._lastRun = new Date();
+    }, this.options.timeout);
 
     this.isRunning = true;
-    this._lastRun = new Date();
   }
 
   public cancel(): Promise<void> {
     this.isCancelled = true;
+    this.isRunning = false;
 
     return this.subscription.unsubscribe();
+  }
+
+  public async reschedule(options: TaskRescheduleOps): Promise<void> {
+    if (!options?.msFromNow && !options?.runTime) {
+      throw new Error("must pass either msFromNow or runTime");
+    }
+
+    await this.cancel();
+
+    if (options.msFromNow && options.runTime) {
+      throw new Error("only accept either msFromNow or runTime.");
+    }
+
+    if (options.msFromNow) {
+      this.options.timeout = options.msFromNow;
+
+      return this._start();
+    }
+
+    if (options.runTime) {
+      const timeDiff = dayjs(options.runTime).diff(new Date());
+      if (timeDiff <= 0) {
+        throw new Error("new run time must be after now");
+      }
+
+      this.options.timeout = timeDiff;
+
+      return this._start();
+    }
   }
 
   public async start(): Promise<void> {

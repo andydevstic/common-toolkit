@@ -14,6 +14,38 @@ import {
   SET_CACHE_POLICY,
 } from "./constants";
 
+export interface Subscription {
+  unsubscribe(): Promise<void>;
+}
+
+export interface DelayedTaskOps {
+  callback: () => void;
+  startOnCreate?: boolean;
+  timeout: number;
+}
+
+export type DelayFn = (callback: () => void, timeout: number) => Subscription;
+
+export interface ITask {
+  id: string;
+  isRunning: boolean;
+  isCancelled: boolean;
+  isCron: boolean;
+  start(): Promise<void>;
+  cancel(): Promise<void>;
+  lastRun(): Promise<Date>;
+  nextRun(): Promise<Date>;
+}
+
+export interface TaskRegistry {
+  register(options: DelayedTaskOps): Promise<ITask>;
+  count(): Promise<number>;
+  getTasks(): Promise<ITask[]>;
+  getTaskById(id: string): Promise<ITask>;
+  cancelTaskById(id: string): Promise<void>;
+  startTaskById(id: string): Promise<void>;
+}
+
 export interface SQLRunner {
   query<T = any>(sql: string, ...args: any[]): Promise<T>;
 }

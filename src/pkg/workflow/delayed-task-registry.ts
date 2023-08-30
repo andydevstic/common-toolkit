@@ -24,7 +24,7 @@ export class DelayedTaskRegistry implements TaskRegistry {
     return this.taskRegistry.get(id);
   }
 
-  public cancelTaskById(id: string): Promise<void> {
+  public async cancelTaskById(id: string): Promise<void> {
     const task = this.taskRegistry.get(id);
     if (!task) {
       throw new Error(`task with id ${id} not exist`);
@@ -34,7 +34,9 @@ export class DelayedTaskRegistry implements TaskRegistry {
       return;
     }
 
-    return task.cancel();
+    await task.cancel();
+
+    this.taskRegistry.delete(id);
   }
 
   public async startTaskById(id: string): Promise<void> {

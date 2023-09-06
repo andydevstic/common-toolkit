@@ -80,7 +80,7 @@ export interface HttpService {
 
 export interface CacheService {
   get(key: string): Promise<any>;
-  set(key: string, value: any, option: SetCacheOption): Promise<any>;
+  set(key: string, value: any, option?: SetCacheOption): Promise<any>;
   del(...keys: string[]): Promise<void>;
   incrBy(key: string, value?: number): Promise<any>;
   decrBy(key: string, value?: number): Promise<any>;

@@ -67,7 +67,11 @@ export class RedisService
     return this._redis.hlen(key);
   }
 
-  public set(key: string, value: any, option: SetCacheOption): Promise<any> {
+  public set(key: string, value: any, option?: SetCacheOption): Promise<any> {
+    if (!option) {
+      return this._redis.set(key, value);
+    }
+
     switch (option.policy) {
       case SET_CACHE_POLICY.WITH_TTL:
         return this._redis.set(key, value, "EX", option.value);

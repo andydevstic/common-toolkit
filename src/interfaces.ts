@@ -24,9 +24,25 @@ export interface DelayedTaskOps {
   timeout: number;
 }
 
+export interface LockStatus {
+  isLocked: boolean;
+  lastActionTz: Date;
+}
+
+export interface ObtainLockResult {
+  isSuccess: boolean;
+  done(): void;
+  message?: string;
+}
+
 export interface TaskRescheduleOps {
   msFromNow?: number;
   runTime?: Date;
+}
+
+export interface KeyLockerOption {
+  initStatus?: LockStatus;
+  lockTTL?: number;
 }
 
 export type DelayFn = (callback: () => void, timeout: number) => Subscription;
@@ -62,6 +78,13 @@ export interface HttpRequestOption {
   query?: any;
   headers?: Record<string, string>;
   reqId?: string;
+}
+
+export interface KeyLockerOption {
+  /**
+   * Default false
+   */
+  isAsync?: boolean;
 }
 
 export interface Logger {

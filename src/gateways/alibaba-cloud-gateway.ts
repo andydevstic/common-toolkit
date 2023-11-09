@@ -2,7 +2,11 @@ import OSS from "ali-oss";
 import axios, { HttpStatusCode } from "axios";
 import Core from "@alicloud/pop-core";
 
-import { CloudStorageClient, STSResponse } from "../interfaces";
+import {
+  CloudStorageClient,
+  PutObjectOption,
+  STSResponse,
+} from "../interfaces";
 
 export interface AlibabaCloudGatewayConfig {
   accessKey: string;
@@ -17,10 +21,6 @@ export interface AlibabaCloudGatewayConfig {
   sts: {
     roleArn: string;
   };
-}
-
-export interface OssPutObjectOption {
-  domain?: string;
 }
 
 export class AlibabaCloudGateway implements CloudStorageClient {
@@ -66,7 +66,7 @@ export class AlibabaCloudGateway implements CloudStorageClient {
   public async uploadRemoteObjectToBucket(
     fileName: string,
     remoteUrl: string,
-    options?: OssPutObjectOption
+    options?: PutObjectOption
   ): Promise<string> {
     const response = await axios.get(remoteUrl, { responseType: "stream" });
     if (response.status !== HttpStatusCode.Ok) {

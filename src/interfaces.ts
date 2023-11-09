@@ -139,9 +139,18 @@ export interface IKafkaService extends IMessageQueueService {
   publish(record: ProducerRecord): Promise<void>;
 }
 
+export interface PutObjectOption {
+  domain: string;
+}
+
 export interface CloudStorageClient {
   generateTmpCredentials(sessionId: string): Promise<any>;
   getObjectReadStream(fileName: string): Promise<any>;
+  uploadRemoteObjectToBucket(
+    fileName: string,
+    remoteUrl: string,
+    options?: PutObjectOption
+  ): Promise<string>;
 }
 
 export interface IFilter {

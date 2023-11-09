@@ -1,4 +1,5 @@
 import OSS from "ali-oss";
+import axios, { HttpStatusCode } from "axios";
 import Core from "@alicloud/pop-core";
 
 import { CloudStorageClient, STSResponse } from "../interfaces";
@@ -16,6 +17,10 @@ export interface AlibabaCloudGatewayConfig {
   sts: {
     roleArn: string;
   };
+}
+
+export interface OssPutObjectOption {
+  domain?: string;
 }
 
 export class AlibabaCloudGateway implements CloudStorageClient {
@@ -56,6 +61,33 @@ export class AlibabaCloudGateway implements CloudStorageClient {
     );
 
     return requestResponse.Credentials;
+  }
+
+  public async uploadRemoteObjectToBucket(
+    fileName: string,
+    remoteUrl: string,
+    options?: OssPutObjectOption
+  ): Promise<string> {
+    const response = await axios.get(remoteUrl, { responseType: "stream" });
+    if (response.status !== HttpStatusCode.Ok) {
+      console.log(response.data);
+
+      throw new Error("failed to fetch from remote url");
+    }
+
+    const { data } = response;
+
+    const putResult = await this.ossClient.put(fileName, data);
+
+    if (options?.domain) {
+      return `${options.domain}/${fileName}`;
+    }
+
+    if (putResult?.url?.includes("http://")) {
+      return putResult.url.replace("http://", "https://");
+    }
+
+    return putResult.url;
   }
 
   public getObjectReadStream(fileName: string): Promise<OSS.GetStreamResult> {

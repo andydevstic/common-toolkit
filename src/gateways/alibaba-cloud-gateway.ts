@@ -77,7 +77,9 @@ export class AlibabaCloudGateway implements CloudStorageClient {
 
     const { data } = response;
 
-    const putResult = await this.ossClient.put(fileName, data);
+    const putResult = await this.ossClient.put(fileName, data, {
+      timeout: options.timeout || 15000, // 15s
+    });
 
     if (options?.domain) {
       return `${options.domain}/${fileName}`;

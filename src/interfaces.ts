@@ -141,6 +141,7 @@ export interface IKafkaService extends IMessageQueueService {
 
 export interface PutObjectOption {
   domain: string;
+  timeout?: number;
 }
 
 export interface CloudStorageClient {

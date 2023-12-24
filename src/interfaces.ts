@@ -78,6 +78,26 @@ export interface HttpService {
   ): Promise<OperationResult<T>>;
 }
 
+export interface InternalAuthGatewayOptions {
+  endpointURL: string;
+  secret: string;
+  serviceName?: string;
+}
+
+export interface InternalAuthLoginResult {
+  accessToken?: string;
+  code?: string;
+}
+
+export interface InternalServiceAuthResult {
+  isValid: boolean;
+  code?: string;
+  serviceMetadata?: {
+    name: string;
+    type: "internal" | "external";
+  };
+}
+
 export interface CacheService {
   get(key: string): Promise<any>;
   set(key: string, value: any, option?: SetCacheOption): Promise<any>;

@@ -90,12 +90,8 @@ export interface InternalAuthLoginResult {
 }
 
 export interface InternalServiceAuthResult {
-  isValid: boolean;
-  code?: string;
-  serviceMetadata?: {
-    name: string;
-    type: "internal" | "external";
-  };
+  name: string;
+  type: "internal" | "external";
 }
 
 export interface CacheService {

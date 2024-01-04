@@ -63,6 +63,26 @@ export class AlibabaCloudGateway implements CloudStorageClient {
     return requestResponse.Credentials;
   }
 
+  public async uploadLocalToBucket(
+    fileName: string,
+    fileData: Buffer,
+    options?: PutObjectOption
+  ): Promise<string> {
+    const putResult = await this.ossClient.put(fileName, fileData, {
+      timeout: options?.timeout || 15000, // 15s
+    });
+
+    if (options?.domain) {
+      return `${options.domain}/${fileName}`;
+    }
+
+    if (putResult?.url?.includes("http://")) {
+      return putResult.url.replace("http://", "https://");
+    }
+
+    return putResult.url;
+  }
+
   public async uploadRemoteObjectToBucket(
     fileName: string,
     remoteUrl: string,
@@ -70,8 +90,6 @@ export class AlibabaCloudGateway implements CloudStorageClient {
   ): Promise<string> {
     const response = await axios.get(remoteUrl, { responseType: "stream" });
     if (response.status !== HttpStatusCode.Ok) {
-      console.log(response.data);
-
       throw new Error("failed to fetch from remote url");
     }
 

@@ -163,6 +163,11 @@ export interface PutObjectOption {
 export interface CloudStorageClient {
   generateTmpCredentials(sessionId: string): Promise<any>;
   getObjectReadStream(fileName: string): Promise<any>;
+  uploadLocalToBucket(
+    fileName: string,
+    fileData: Buffer,
+    options?: PutObjectOption
+  ): Promise<string>;
   uploadRemoteObjectToBucket(
     fileName: string,
     remoteUrl: string,

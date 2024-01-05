@@ -83,6 +83,10 @@ export class AlibabaCloudGateway implements CloudStorageClient {
     return putResult.url;
   }
 
+  public async deleteObject(filePath: string): Promise<void> {
+    await this.ossClient.delete(filePath);
+  }
+
   public async uploadRemoteObjectToBucket(
     fileName: string,
     remoteUrl: string,

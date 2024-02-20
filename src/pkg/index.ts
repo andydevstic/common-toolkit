@@ -10,3 +10,4 @@ export * as filterHelpers from "./filter-helper";
 export * as loggers from "./logger";
 export * as workflows from "./workflow";
 export * as geoipHelpers from "./geoip-helper";
+export * as arrayHelpers from "./array-helper";

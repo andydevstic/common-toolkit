@@ -59,7 +59,7 @@ export class KafkaService implements IMessageQueueService {
     this._producer.send(record);
   }
 
-  async commitOffsets(data: TopicPartitionOffsetAndMetadata[]) {
+  async commitOffsets(data: TopicPartitionOffsetAndMetadata[]): Promise<void> {
     return this._consumer.commitOffsets(data);
   }
 }

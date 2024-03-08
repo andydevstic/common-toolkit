@@ -5,6 +5,7 @@ import {
   ConsumerSubscribeTopics,
   ProducerConfig,
   ProducerRecord,
+  TopicPartitionOffsetAndMetadata,
 } from "kafkajs";
 
 import {
@@ -135,6 +136,7 @@ export interface IMessageQueueService {
   initConsumer(config?: any): Promise<void>;
   listen(subscribeConfig: any, runConfig: any): Promise<void>;
   publish(record: any): Promise<void>;
+  commitOffsets(data: TopicPartitionOffsetAndMetadata[]): Promise<void>;
 }
 
 export interface HttpResponse<T = any> {

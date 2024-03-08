@@ -9,6 +9,7 @@ import {
   ProducerConfig,
   ConsumerRunConfig,
   ProducerRecord,
+  TopicPartitionOffsetAndMetadata,
 } from "kafkajs";
 
 export class KafkaService implements IMessageQueueService {
@@ -56,5 +57,9 @@ export class KafkaService implements IMessageQueueService {
 
   async publish(record: ProducerRecord): Promise<void> {
     this._producer.send(record);
+  }
+
+  async commitOffsets(data: TopicPartitionOffsetAndMetadata[]) {
+    return this._consumer.commitOffsets(data);
   }
 }

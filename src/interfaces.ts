@@ -118,6 +118,10 @@ export interface ListCacheService {
   llen(key: string): Promise<number>;
 }
 
+export interface CacheScriptEvaluator {
+  eval(script: string, numberOfKeys: number, data: any[]): Promise<any>;
+}
+
 export interface LockResult {
   isLocked: boolean;
   attemptsLeft: number;

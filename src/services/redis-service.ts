@@ -1,6 +1,7 @@
 import * as ioredis from "ioredis";
 
 import {
+  CacheScriptEvaluator,
   CacheService,
   HashCacheService,
   ListCacheService,
@@ -9,7 +10,11 @@ import {
 import { SET_CACHE_POLICY } from "../constants";
 
 export class RedisService
-  implements CacheService, HashCacheService, ListCacheService
+  implements
+    CacheService,
+    HashCacheService,
+    ListCacheService,
+    CacheScriptEvaluator
 {
   protected _redis: ioredis.Redis;
 
@@ -23,6 +28,10 @@ export class RedisService
 
   public async del(...keys: string[]): Promise<void> {
     await this._redis.del(...keys);
+  }
+
+  public async eval(script: string, numberOfKeys: number, data: any[]) {
+    return this._redis.eval(script, numberOfKeys, ...data);
   }
 
   public async hset(key: string, field: string, value: any): Promise<void> {

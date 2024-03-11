@@ -99,6 +99,10 @@ export class RedisService
     return this._redis.incrby(key, value);
   }
 
+  public incrByFloat(key: string, value: number): Promise<any> {
+    return this._redis.incrbyfloat(key, value);
+  }
+
   public decrBy(key: string, value = 1): Promise<any> {
     return this._redis.decrby(key, value);
   }

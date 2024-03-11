@@ -1,6 +1,6 @@
 {
   "name": "mvc-common-toolkit",
-  "version": "1.21.1",
+  "version": "1.22.0",
   "description": "This package contains common toolkits like query string parser, filter parser,... and other reusable patterns for any web projects",
   "main": "dist/index.js",
   "scripts": {

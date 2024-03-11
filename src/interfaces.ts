@@ -119,7 +119,7 @@ export interface ListCacheService {
 }
 
 export interface CacheScriptEvaluator {
-  eval(script: string, numberOfKeys: number, data: any[]): Promise<any>;
+  eval(script: string, numberOfKeys: number, ...args: any[]): Promise<any>;
 }
 
 export interface LockResult {

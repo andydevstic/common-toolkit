@@ -30,8 +30,8 @@ export class RedisService
     await this._redis.del(...keys);
   }
 
-  public async eval(script: string, numberOfKeys: number, data: any[]) {
-    return this._redis.eval(script, numberOfKeys, ...data);
+  public async eval(script: string, numberOfKeys: number, ...args: any[]) {
+    return this._redis.eval(script, numberOfKeys, ...args);
   }
 
   public async hset(key: string, field: string, value: any): Promise<void> {

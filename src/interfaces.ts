@@ -1,8 +1,10 @@
 import { Borders, CellValue, Style } from "exceljs";
 import {
+  Consumer,
   ConsumerConfig,
   ConsumerRunConfig,
   ConsumerSubscribeTopics,
+  Producer,
   ProducerConfig,
   ProducerRecord,
   TopicPartitionOffsetAndMetadata,
@@ -142,6 +144,8 @@ export interface IMessageQueueService {
   listen(subscribeConfig: any, runConfig: any): Promise<void>;
   publish(record: any): Promise<void>;
   commitOffsets(data: TopicPartitionOffsetAndMetadata[]): Promise<void>;
+  producer: Producer;
+  consumer: Consumer;
 }
 
 export interface HttpResponse<T = any> {

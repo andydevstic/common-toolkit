@@ -18,6 +18,14 @@ export class KafkaService implements IMessageQueueService {
   protected _producer: Producer;
   protected _consumer: Consumer;
 
+  public get producer() {
+    return this._producer;
+  }
+
+  public get consumer() {
+    return this.consumer;
+  }
+
   constructor(config: KafkaConfig) {
     this._kafka = new Kafka(config);
   }

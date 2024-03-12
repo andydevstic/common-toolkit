@@ -23,7 +23,7 @@ export class KafkaService implements IMessageQueueService {
   }
 
   public get consumer() {
-    return this.consumer;
+    return this._consumer;
   }
 
   constructor(config: KafkaConfig) {

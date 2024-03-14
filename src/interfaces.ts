@@ -136,7 +136,7 @@ export interface CRUDService<T = any> {
 
 export interface SetCacheOption {
   policy: SET_CACHE_POLICY;
-  value: any;
+  value?: any;
 }
 export interface IMessageQueueService {
   initProducer(config?: any): Promise<void>;

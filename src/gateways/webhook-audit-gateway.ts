@@ -15,7 +15,11 @@ export class WebhookAuditGateway implements AuditGateway {
   ) {}
 
   public publish(logId: string, level: LOG_LEVEL, content: any): Promise<any> {
-    const msg = `[${this.config.projectName}] | [${level}] | [${logId}]: ${content}`;
+    const logContent =
+      content && typeof content === "object"
+        ? JSON.stringify(content)
+        : content;
+    const msg = `[${this.config.projectName}] | [${level}] | [${logId}]: ${logContent}`;
 
     return this.httpService.send("post", this.webhookURL, {
       headers: {

@@ -26,6 +26,7 @@
   "homepage": "https://github.com/andydevstic/common-toolkit#readme",
   "dependencies": {
     "@alicloud/pop-core": "^1.7.13",
+    "@faker-js/faker": "^8.4.1",
     "@paralleldrive/cuid2": "^2.2.0",
     "ali-oss": "^6.17.1",
     "axios": "^1.4.0",

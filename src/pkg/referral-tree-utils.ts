@@ -30,6 +30,7 @@ interface ReferralTreeConfig {
   userConfig: UserConfig;
   passwordHasher?: (password: string) => Promise<string>;
   refCodeGenerator?: () => string;
+  addAdditionalData?: () => Promise<Record<string, any>>;
 }
 
 const defaultRefcodeGenerator = () =>
@@ -44,20 +45,16 @@ export const generateReferralTree = async (data: ReferralTreeConfig) => {
     userConfig,
     passwordHasher,
     refCodeGenerator,
+    addAdditionalData = () => {},
   } = data;
 
   const hashedPassword = await passwordHasher(userConfig.password);
 
-  const rootUser: User = {
-    parentRefCode: null,
-    email: faker.internet.email().toLowerCase(),
-    refCode:
-      userConfig.rootRefCode ||
-      refCodeGenerator?.() ||
-      defaultRefcodeGenerator(),
-    password: hashedPassword,
-    children: [],
-  };
+  const rootUser = await genNewUser(null, {
+    hashedPassword,
+    additionalDataGenerator: addAdditionalData,
+    refCodeGenerator: refCodeGenerator || defaultRefcodeGenerator,
+  });
 
   const totalUsersToInsert: NormalizedUser[] = [normalizeUser(rootUser)];
 
@@ -69,11 +66,11 @@ export const generateReferralTree = async (data: ReferralTreeConfig) => {
 
     // Handle the node where the number of children is required
     const nodeSelectedAsRequired = currentLayerUsers[0];
-    // console.log({ nodeSelectedAsRequired });
     for (let i = 0; i < mustHaveChildPerNode; i++) {
-      const newUser = genNewUser(nodeSelectedAsRequired.refCode, {
+      const newUser = await genNewUser(nodeSelectedAsRequired.refCode, {
         hashedPassword,
         refCodeGenerator: refCodeGenerator || defaultRefcodeGenerator,
+        additionalDataGenerator: addAdditionalData,
       });
 
       allChildUserCreated.push(newUser);
@@ -82,22 +79,25 @@ export const generateReferralTree = async (data: ReferralTreeConfig) => {
 
     // Handle the nodes where the number of children is within range.
     // Exclude the first user as it's already processed
-    currentLayerUsers.slice(1, currentLayerUsers.length).forEach((user) => {
-      const noOfChildNodes = faker.helpers.rangeToNumber({
-        min: minChildPerNode,
-        max: maxChildPerNode,
-      });
-
-      for (let i = 0; i < noOfChildNodes; i++) {
-        const newUser = genNewUser(user.refCode, {
-          hashedPassword,
-          refCodeGenerator: refCodeGenerator || defaultRefcodeGenerator,
+    await Promise.all(
+      currentLayerUsers.slice(1, currentLayerUsers.length).map(async (user) => {
+        const noOfChildNodes = faker.helpers.rangeToNumber({
+          min: minChildPerNode,
+          max: maxChildPerNode,
         });
 
-        allChildUserCreated.push(newUser);
-        user.children.push(newUser);
-      }
-    });
+        for (let i = 0; i < noOfChildNodes; i++) {
+          const newUser = await genNewUser(user.refCode, {
+            hashedPassword,
+            refCodeGenerator: refCodeGenerator || defaultRefcodeGenerator,
+            additionalDataGenerator: addAdditionalData,
+          });
+
+          allChildUserCreated.push(newUser);
+          user.children.push(newUser);
+        }
+      })
+    );
 
     // Move on to next layer
     const normalizedUsers: Omit<User, "children">[] =
@@ -112,24 +112,25 @@ export const generateReferralTree = async (data: ReferralTreeConfig) => {
 };
 
 const normalizeUser = (user: User) => {
-  return {
-    parentRefCode: user.parentRefCode,
-    email: user.email,
-    password: user.password,
-    refCode: user.refCode,
-  };
+  const cloned = JSON.parse(JSON.stringify(user));
+  delete cloned.children;
+
+  return cloned;
 };
 
-const genNewUser = (
+const genNewUser = async (
   parentRefCode: string,
-  { hashedPassword, refCodeGenerator }
-): User => {
+  { hashedPassword, refCodeGenerator, additionalDataGenerator }
+): Promise<User> => {
+  const additionalData = await additionalDataGenerator();
+
   return {
     parentRefCode,
     password: hashedPassword,
     email: faker.internet.email().toLowerCase(),
     children: [],
     refCode: refCodeGenerator(),
+    ...additionalData,
   };
 };
 
@@ -139,6 +140,11 @@ const genNewUser = (
 //   mustHaveChildPerNode: 5,
 //   noOfLevels: 5,
 //   passwordHasher: async (data) => data,
+//   addAdditionalData: async () => {
+//     return {
+//       fullName: faker.person.fullName(),
+//     };
+//   },
 //   userConfig: {
 //     password: "12345",
 //     rootRefCode: "ABCD1234",

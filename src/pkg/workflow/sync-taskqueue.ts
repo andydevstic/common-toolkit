@@ -94,15 +94,11 @@ export class SyncTaskQueue {
   protected logger = new PinoLogger();
   protected queueList: Map<string, Queue> = new Map();
 
-  public push(
-    queueName: string,
-    name: string,
-    handler: any
-  ): Promise<OperationResult> {
+  public push<T>(queueName: string, name: string, handler: any): Promise<T> {
     const queue = this.queueList.get(queueName) || new Queue(queueName);
 
     return new Promise((resolve, reject) => {
-      const doneFn = (err: Error | null, data: any) => {
+      const doneFn = (err: Error | null, data: T) => {
         if (err) {
           reject(err);
 

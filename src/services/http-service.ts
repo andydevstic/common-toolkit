@@ -19,8 +19,6 @@ export class AxiosHttpService implements HttpService {
     url: string,
     options: HttpRequestOption = {}
   ): Promise<OperationResult<T>> {
-    const reqId = options?.reqId || createId();
-
     try {
       const response = await axios.request({
         method,

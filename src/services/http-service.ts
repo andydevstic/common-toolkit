@@ -39,14 +39,6 @@ export class AxiosHttpService implements HttpService {
         params: options.query,
       });
 
-      this.logger.info(
-        "[HttpService]",
-        `[Id: ${reqId}]`,
-        options?.serviceName || `[Service ${options.serviceName}]`,
-        `Receive response: ${JSON.stringify(maskSensitiveData(response.data))}`,
-        `Status code: ${response.status}`
-      );
-
       if (response.status >= 400) {
         return {
           success: false,

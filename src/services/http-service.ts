@@ -22,15 +22,6 @@ export class AxiosHttpService implements HttpService {
     const reqId = options?.reqId || createId();
 
     try {
-      this.logger.info(
-        "[HttpService]",
-        `[Id: ${reqId}]`,
-        options?.serviceName || `[Service ${options.serviceName}]`,
-        `Send ${method} request to ${url}.`,
-        `Body: ${maskSensitiveData(options.body)}`,
-        `Query: ${maskSensitiveData(options.query)}`
-      );
-
       const response = await axios.request({
         method,
         url,

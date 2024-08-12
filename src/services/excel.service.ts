@@ -27,7 +27,7 @@ export class ExcelService {
       this.workbook = await newWorkbook.xlsx.readFile(templatePath);
 
       return this;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Error loading excel template: ${error.message}`);
     }
   }
@@ -42,7 +42,7 @@ export class ExcelService {
       this.workbook = await newWorkbook.xlsx.load(buffer);
 
       return this;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Error loading excel from buffer: ${error.message}`);
     }
   }

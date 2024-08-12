@@ -4,7 +4,7 @@
   "description": "This package contains common toolkits like query string parser, filter parser,... and other reusable patterns for any web projects",
   "main": "dist/index.js",
   "scripts": {
-    "test": "mocha -r ts-node/register './src/**/*.test.ts'",
+    "test": "mocha -r ts-node/register './src/**/*.spec.ts'",
     "build": "rimraf dist && tsc",
     "prepublishOnly": "yarn build"
   },
@@ -39,15 +39,18 @@
     "kafkajs": "^2.2.4",
     "knex": "^2.4.2",
     "pino": "^8.15.0",
-    "regenerator-runtime": "^0.14.0"
+    "regenerator-runtime": "^0.14.0",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@types/ali-oss": "^6.16.7",
     "@types/bcrypt": "^5.0.0",
     "@types/chai": "^4.3.5",
+    "@types/chai-as-promised": "^7.1.8",
     "@types/geoip-country": "^4.0.2",
     "@types/mocha": "^10.0.1",
-    "chai": "^4.3.7",
+    "chai": "4",
+    "chai-as-promised": "7",
     "mocha": "^10.2.0",
     "rimraf": "^5.0.0",
     "ts-node": "^10.9.1",

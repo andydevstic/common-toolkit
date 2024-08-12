@@ -69,7 +69,7 @@ export class SecurityService {
           ),
         },
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         success: false,
         message: error.message,

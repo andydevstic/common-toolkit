@@ -30,12 +30,12 @@ describe("filter helper", () => {
       const filters: IFilter[] = [
         {
           field: "name",
-          operator: FILTER_OPERATOR.STARTS_WITH,
+          operator: FILTER_OPERATOR.INS_STARTS_WITH,
           value: "andy",
         },
         {
           field: "email",
-          operator: FILTER_OPERATOR.ENDS_WITH,
+          operator: FILTER_OPERATOR.INS_ENDS_WITH,
           value: "andy@gmail.com",
         },
         {
@@ -80,7 +80,7 @@ describe("filter helper", () => {
         },
         {
           field: "email",
-          operator: FILTER_OPERATOR.LIKE,
+          operator: FILTER_OPERATOR.INS_LIKE,
           value: "andy@gmail.com",
         },
       ];

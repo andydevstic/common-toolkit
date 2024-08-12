@@ -13,13 +13,15 @@
     "esModuleInterop": true,
     "incremental": true,
     "skipLibCheck": true,
+    "strict": true,
     "strictNullChecks": false,
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
+    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": false,
-    "allowJs": true,
+    "allowJs": true
   },
-  "include": ["./src", "./index.ts"],
+  "include": ["./src", "./index.ts", "./src/**/*.ts"],
+  "exclude": ["node_modules"]
 }

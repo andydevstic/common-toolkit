@@ -9,7 +9,6 @@ import {
   Logger,
   OperationResult,
 } from "../interfaces";
-import { maskSensitiveData } from "../pkg/http-request-utils";
 
 export class AxiosHttpService implements HttpService {
   constructor(protected logger: Logger = new PinoLogger()) {}
@@ -40,7 +39,7 @@ export class AxiosHttpService implements HttpService {
         success: true,
         data: response.data,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(error.message, error.stack);
 
       // Due to timeout

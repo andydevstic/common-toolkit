@@ -64,7 +64,7 @@ class Queue {
       // Run next task
       // Don't want to block the callstack.
       setTimeout(this.runNextTask.bind(this), 0);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(error.message, error.stack);
 
       setTimeout(this.runNextTask.bind(this), 0);

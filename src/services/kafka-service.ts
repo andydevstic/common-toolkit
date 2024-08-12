@@ -19,10 +19,18 @@ export class KafkaService implements IMessageQueueService {
   protected _consumer: Consumer;
 
   public get producer() {
+    if (!this._producer) {
+      throw new Error("producer not yet init");
+    }
+
     return this._producer;
   }
 
   public get consumer() {
+    if (!this._producer) {
+      throw new Error("consumer not yet init");
+    }
+
     return this._consumer;
   }
 
@@ -58,9 +66,9 @@ export class KafkaService implements IMessageQueueService {
     subscribeConfig: ConsumerSubscribeTopics,
     runConfig: ConsumerRunConfig
   ): Promise<void> {
-    await this._consumer.subscribe(subscribeConfig);
+    await this.consumer.subscribe(subscribeConfig);
 
-    return this._consumer.run(runConfig);
+    return this.consumer.run(runConfig);
   }
 
   async publish(record: ProducerRecord): Promise<void> {
@@ -68,6 +76,6 @@ export class KafkaService implements IMessageQueueService {
   }
 
   async commitOffsets(data: TopicPartitionOffsetAndMetadata[]): Promise<void> {
-    return this._consumer.commitOffsets(data);
+    return this.consumer.commitOffsets(data);
   }
 }

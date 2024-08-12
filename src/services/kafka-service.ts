@@ -27,7 +27,7 @@ export class KafkaService implements IMessageQueueService {
   }
 
   public get consumer() {
-    if (!this._producer) {
+    if (!this._consumer) {
       throw new Error("consumer not yet init");
     }
 

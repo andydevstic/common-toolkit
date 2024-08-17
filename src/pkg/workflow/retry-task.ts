@@ -6,10 +6,11 @@ interface RetryTaskOptions {
   taskName: string;
   retryCount?: number;
   retryIntervalInMs?: number;
+  returnOperationResult?: boolean;
 }
 
 export class RetryTask {
-  constructor(task: TaskFn, opts: RetryTaskOptions) {
+  constructor(task: TaskFn, protected opts: RetryTaskOptions) {
     this._task = task;
     this._retryCount = opts?.retryCount || 3;
     this._retryIntervalInMs = opts?.retryIntervalInMs || 500;
@@ -60,6 +61,15 @@ export class RetryTask {
       // Reset retry count back to normal
       this._currentRetryCount = this._retryCount;
 
+      if (this.opts?.returnOperationResult) {
+        done(null, {
+          success: false,
+          message: `retry task ${this.taskName} failed after ${this.maxRetryCount} retries`,
+        } as any);
+
+        return;
+      }
+
       done(
         new Error(
           `retry task ${this.taskName} failed after ${this.maxRetryCount} retries`
@@ -76,6 +86,15 @@ export class RetryTask {
       // If operation result is returned
       if (result?.success === false) {
         throw new Error(result.message || "execution failed");
+      }
+
+      if (this.opts?.returnOperationResult && !result?.success) {
+        done(null, {
+          success: true,
+          data: result,
+        } as any);
+
+        return;
       }
 
       done(null, result);

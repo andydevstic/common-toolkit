@@ -49,6 +49,31 @@ describe("retry task", () => {
 
       expect(result).to.be.eq(data);
     });
+
+    it("should pass if operation result is successful", async () => {
+      const data = "hello world";
+
+      const task = () =>
+        new Promise((resolve, reject) => {
+          setTimeout(
+            () =>
+              resolve({
+                success: true,
+                data,
+              }),
+            100
+          );
+        });
+
+      const retryTask = new RetryTask(task, {
+        retryCount: 3,
+        taskName: data,
+      });
+
+      const result = await retryTask.run();
+
+      expect(result?.data).to.be.eq(data);
+    });
   });
 
   describe("failure cases", () => {
@@ -63,6 +88,32 @@ describe("retry task", () => {
       const retryTask = new RetryTask(task, {
         retryCount: 3,
         taskName: data,
+        retryIntervalInMs: 300,
+      });
+
+      await expect(retryTask.run()).to.be.rejectedWith(
+        "retry task hello world failed after 3 retries"
+      );
+    });
+
+    it("throws if retry count is exceeded when operation result failed", async () => {
+      const task = () =>
+        new Promise((resolve, reject) => {
+          setTimeout(
+            () =>
+              resolve({
+                success: false,
+                message: "failed for some reason",
+              }),
+            100
+          );
+        });
+
+      const taskName = "hello world";
+
+      const retryTask = new RetryTask(task, {
+        retryCount: 3,
+        taskName,
         retryIntervalInMs: 300,
       });
 

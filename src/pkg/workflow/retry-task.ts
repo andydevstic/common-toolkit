@@ -73,6 +73,11 @@ export class RetryTask {
     try {
       const result = await this._task();
 
+      // If operation result is returned
+      if (result?.success === false) {
+        throw new Error(result.message || "execution failed");
+      }
+
       done(null, result);
     } catch (error: any) {
       eachErrorHandler?.(error);

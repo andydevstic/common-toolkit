@@ -162,5 +162,33 @@ describe("retry task", () => {
         "retry task hello world failed after 3 retries"
       );
     });
+
+    it("returns failed operation result if retry count is exceeded when operation result failed", async () => {
+      const task = () =>
+        new Promise((resolve, reject) => {
+          setTimeout(
+            () =>
+              resolve({
+                success: false,
+                message: "failed for some reason",
+              }),
+            100
+          );
+        });
+
+      const taskName = "hello world";
+
+      const retryTask = new RetryTask(task, {
+        retryCount: 3,
+        taskName,
+        retryIntervalInMs: 300,
+        returnOperationResult: true,
+      });
+
+      const failedResult = await retryTask.run();
+
+      expect(failedResult.success).to.exist;
+      expect(failedResult.success).to.be.false;
+    });
   });
 });

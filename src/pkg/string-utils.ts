@@ -73,5 +73,5 @@ export const maskFn = (key: string, value: string) => {
   const foundMask = masks.find((m) => m.match(key));
   if (!foundMask) return value;
   const { pattern, replacer } = foundMask;
-  return value.replace(pattern, replacer);
+  return value?.replace?.(pattern, replacer) || "";
 };

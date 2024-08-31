@@ -1,7 +1,6 @@
 import { EventEmitter } from "stream";
 
 import { PinoLogger } from "../logger";
-import { OperationResult } from "../../interfaces";
 
 class Task {
   protected logger = new PinoLogger();
@@ -16,8 +15,6 @@ class Task {
   public async run() {
     try {
       const data = await this.handler();
-
-      this.logger.info(`processed task ${this.name}`);
 
       this.doneFn(null, data);
     } catch (error) {
@@ -57,10 +54,6 @@ class Queue {
       // Execute the task
       await taskToRun.run();
 
-      this.logger.warn(
-        `task ${taskToRun.name} is done for queue ${this.queueName}`
-      );
-
       // Run next task
       // Don't want to block the callstack.
       setTimeout(this.runNextTask.bind(this), 0);
@@ -83,7 +76,6 @@ class Queue {
   }
 
   public add(task: Task): void {
-    this.logger.warn(`queue ${this.queueName} added task ${task.name}`);
     this.tasks.push(task);
 
     this.run();

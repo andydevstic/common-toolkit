@@ -31,6 +31,15 @@ export class WorksheetUtils {
     column.width = width;
   }
 
+  public getCellByAddress(
+    rowIndexOrName: string | number,
+    colIndexOrName: string | number
+  ): Cell {
+    const targetCell = this.worksheet.getCell(rowIndexOrName, colIndexOrName);
+
+    return targetCell;
+  }
+
   public writeCellByAddress(
     cellAddress: string,
     cellData: Partial<ICellData>
@@ -58,6 +67,20 @@ export class WorksheetUtils {
 
   public duplicateRow(rowNumber: number, amount = 1, insert = true): void {
     this.worksheet.duplicateRow(rowNumber, amount, insert);
+  }
+
+  public duplicateColumn(colIndex: number): void {
+    const columnValues = this.worksheet.getColumn(colIndex).values;
+
+    this.cutAndOptionallyAddColumns(colIndex, 0, columnValues.slice());
+  }
+
+  public cutAndOptionallyAddColumns(
+    startColIndex: number,
+    cutCount: number,
+    ...args: any[][]
+  ) {
+    return this.worksheet.spliceColumns(startColIndex, cutCount, ...args);
   }
 
   public mergeCells(

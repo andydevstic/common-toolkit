@@ -1,4 +1,5 @@
-type TaskFn = () => any | Promise<any>;
+import { TaskFn } from "../../interfaces";
+
 type TaskErrorHandler = (err: Error) => void | Promise<void>;
 type DoneFn<T = any> = (err: Error, data: T) => void;
 

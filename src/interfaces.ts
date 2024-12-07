@@ -34,6 +34,8 @@ export interface TaskRescheduleOps {
 
 export type DelayFn = (callback: () => void, timeout: number) => Subscription;
 
+export type TaskFn = () => any | Promise<any>;
+
 export interface ITask {
   id: string;
   isRunning: boolean;

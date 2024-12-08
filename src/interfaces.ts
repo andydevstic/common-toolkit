@@ -32,6 +32,10 @@ export interface TaskRescheduleOps {
   runTime?: Date;
 }
 
+export interface TaskQueue {
+  push<T = any>(queueName: string, name: string, handler: any): Promise<T>;
+}
+
 export type DelayFn = (callback: () => void, timeout: number) => Subscription;
 
 export type TaskFn = () => any | Promise<any>;

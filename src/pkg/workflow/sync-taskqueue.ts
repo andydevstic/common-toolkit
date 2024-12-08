@@ -1,6 +1,7 @@
 import { EventEmitter } from "stream";
 
 import { PinoLogger } from "../logger";
+import { TaskQueue } from "../../interfaces";
 
 class Task {
   protected logger = new PinoLogger();
@@ -82,7 +83,7 @@ class Queue {
   }
 }
 
-export class SyncTaskQueue {
+export class SyncTaskQueue implements TaskQueue {
   protected logger = new PinoLogger();
   protected queueList: Map<string, Queue> = new Map();
 

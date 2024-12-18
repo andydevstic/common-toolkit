@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha -r ts-node/register './src/**/*.spec.ts'",
-    "build": "rimraf dist && tsc",
+    "compile": "tsc",
+    "build": "rimraf dist && yarn compile",
     "prepublishOnly": "yarn build"
   },
   "repository": {

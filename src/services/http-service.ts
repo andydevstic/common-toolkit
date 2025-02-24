@@ -1,5 +1,4 @@
 import axios from "axios";
-import { createId } from "@paralleldrive/cuid2";
 
 import { PinoLogger } from "../pkg/logger";
 import { APP_ERROR, HttpMethod } from "../constants";
@@ -25,6 +24,7 @@ export class AxiosHttpService implements HttpService {
         headers: options.headers,
         data: options.body,
         params: options.query,
+        ...options,
       });
 
       if (response.status >= 400) {

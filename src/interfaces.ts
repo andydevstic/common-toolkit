@@ -16,6 +16,7 @@ import {
   LOG_LEVEL,
   SET_CACHE_POLICY,
 } from "./constants";
+import { AxiosRequestConfig } from "axios";
 
 export interface Subscription {
   unsubscribe(): Promise<void>;
@@ -65,7 +66,7 @@ export interface SQLRunner {
   query<T = any>(sql: string, ...args: any[]): Promise<T>;
 }
 
-export interface HttpRequestOption {
+export interface HttpRequestOption extends AxiosRequestConfig {
   serviceName?: string;
   body?: any;
   query?: any;

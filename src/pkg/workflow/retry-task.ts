@@ -38,7 +38,14 @@ export class RetryTask {
     return this._retryIntervalInMs;
   }
 
-  public async run<T = any>(eachErrorHandler?: TaskErrorHandler): Promise<T> {
+  public async run<T = any>(
+    eachErrorHandler?: TaskErrorHandler,
+    allFailedHandler?: TaskErrorHandler
+  ): Promise<T> {
+    if (this._currentRetryCount === 0) {
+      throw new Error("retry task already run");
+    }
+
     return new Promise(async (resolve, reject) => {
       const doneFn = (err: Error, data: T) => {
         if (err) {
@@ -50,18 +57,17 @@ export class RetryTask {
         resolve(data);
       };
 
-      this.execTask(doneFn, eachErrorHandler);
+      this.execTask(doneFn, eachErrorHandler, allFailedHandler);
     });
   }
 
   protected async execTask<T = any>(
     done: DoneFn<T>,
-    eachErrorHandler: TaskErrorHandler
+    eachErrorHandler: TaskErrorHandler,
+    allFailedHandler: TaskErrorHandler
   ): Promise<void> {
+    // Max retry reached
     if (this._currentRetryCount === 0) {
-      // Reset retry count back to normal
-      this._currentRetryCount = this._retryCount;
-
       if (this.opts?.returnOperationResult) {
         done(null, {
           success: false,
@@ -71,12 +77,12 @@ export class RetryTask {
         return;
       }
 
-      done(
-        new Error(
-          `retry task ${this.taskName} failed after ${this.maxRetryCount} retries`
-        ),
-        null
+      const error = new Error(
+        `retry task ${this.taskName} failed after ${this.maxRetryCount} retries`
       );
+
+      allFailedHandler?.(error);
+      done(error, null);
 
       return;
     }
@@ -103,7 +109,7 @@ export class RetryTask {
       eachErrorHandler?.(error);
 
       setTimeout(
-        () => this.execTask(done, eachErrorHandler),
+        () => this.execTask(done, eachErrorHandler, allFailedHandler),
         this.retryIntervalInMs
       );
     } finally {

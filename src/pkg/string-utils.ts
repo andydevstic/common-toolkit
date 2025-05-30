@@ -51,7 +51,13 @@ const standardlize = (f1: string) =>
 const masks = [
   {
     match: (value: string) =>
-      ["password", "Authorization", "access_token"]
+      [
+        "password",
+        "Authorization",
+        "access_token",
+        "refresh_token",
+        "signature",
+      ]
         .map((item) => standardlize(item))
         .includes(standardlize(value)),
     pattern: /^(.*)$/,

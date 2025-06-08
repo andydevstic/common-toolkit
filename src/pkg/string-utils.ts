@@ -48,36 +48,57 @@ export function validatePasswordStrengthWithMessage(password: string): string {
 
 const standardlize = (f1: string) =>
   f1.replace(new RegExp("_", "g"), "").toLowerCase();
-const masks = [
+
+type MaskRule = {
+  keys: string[];
+  pattern: RegExp;
+  replacer: (...groups: string[]) => string;
+};
+
+const maskRules: MaskRule[] = [
   {
-    match: (value: string) =>
-      [
-        "password",
-        "Authorization",
-        "access_token",
-        "refresh_token",
-        "signature",
-      ]
-        .map((item) => standardlize(item))
-        .includes(standardlize(value)),
+    keys: [
+      "password",
+      "Authorization",
+      "access_token",
+      "refresh_token",
+      "signature",
+    ],
     pattern: /^(.*)$/,
-    replacer: (_, _s1: string) => "***masked***",
+    replacer: () => "***masked***",
   },
   {
-    match: (value: string) =>
-      ["txid", "txnid"]
-        .map((item) => standardlize(item))
-        .includes(standardlize(value)),
+    keys: ["txid", "txnid"],
     pattern: /^(.{10})(.*)(.{36})$/,
-    replacer: (_, s1: string, s2: string, s3: string) =>
-      `${s1}${"*".repeat(s2.length)}${s3}`,
+    replacer: (_match, prefix, middle, suffix) =>
+      `${prefix}${"*".repeat(middle.length)}${suffix}`,
   },
 ];
 
-export const maskFn = (key: string, value: string) => {
-  if (typeof value === "object") return value;
-  const foundMask = masks.find((m) => m.match(key));
-  if (!foundMask) return value;
-  const { pattern, replacer } = foundMask;
-  return value?.replace?.(pattern, replacer) || "";
+export const maskFn = (
+  key: string,
+  value: unknown,
+  additionalMaskRules: MaskRule[] = []
+): unknown => {
+  // Only process string values
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const normalizedKey = standardlize(key);
+  // Merge default rules with any additional ones
+  const allRules = [...maskRules, ...additionalMaskRules];
+
+  // Find a rule whose keys match the normalized key
+  const rule = allRules.find(({ keys }) =>
+    keys.some((k) => standardlize(k) === normalizedKey)
+  );
+
+  // No matching rule? Return the original value
+  if (!rule) {
+    return value;
+  }
+
+  // Apply pattern and replacer
+  return value.replace(rule.pattern, rule.replacer);
 };

@@ -26,6 +26,20 @@ export class RedisService
     return this._redis.get(key);
   }
 
+  public async getNumber(key: string): Promise<number | undefined> {
+    const result = await this._redis.get(key);
+    if (result === null) {
+      return undefined;
+    }
+
+    const number = parseFloat(result);
+    if (isNaN(number)) {
+      throw new Error(`Value for key "${key}" is not a valid number.`);
+    }
+
+    return number;
+  }
+
   public async del(...keys: string[]): Promise<void> {
     await this._redis.del(...keys);
   }

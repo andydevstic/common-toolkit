@@ -113,6 +113,10 @@ export class RedisService
     return this._redis.incrby(key, value);
   }
 
+  public expire(key: string, seconds: number): Promise<any> {
+    return this._redis.expire(key, seconds);
+  }
+
   public incrByFloat(key: string, value: number): Promise<any> {
     return this._redis.incrbyfloat(key, value);
   }

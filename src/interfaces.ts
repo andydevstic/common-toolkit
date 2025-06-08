@@ -15,6 +15,7 @@ import {
   HttpMethod,
   LOG_LEVEL,
   SET_CACHE_POLICY,
+  SET_EXPIRE_POLICY,
 } from "./constants";
 import { AxiosRequestConfig } from "axios";
 
@@ -108,9 +109,23 @@ export interface CacheService {
   get(key: string): Promise<any>;
   set(key: string, value: any, option?: SetCacheOption): Promise<any>;
   del(...keys: string[]): Promise<void>;
-  incrBy(key: string, value?: number): Promise<any>;
-  incrByFloat(key: string, value: number): Promise<any>;
-  decrBy(key: string, value?: number): Promise<any>;
+  incrBy(key: string, value?: number): Promise<number>;
+  incrByFloat(
+    key: string,
+    value: number,
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number>;
+  decrBy(
+    key: string,
+    value: number,
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number>;
+  deleteByPattern(pattern: string): Promise<void>;
+  getNumber(key: string): Promise<number | undefined>;
+  expire(
+    key: string,
+    expiryOptions: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number>;
 }
 
 export interface HashCacheService {

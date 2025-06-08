@@ -32,12 +32,7 @@ export class RedisService
       return undefined;
     }
 
-    const number = parseFloat(result);
-    if (isNaN(number)) {
-      throw new Error(`Value for key "${key}" is not a valid number.`);
-    }
-
-    return number;
+    return this.convertToNumber(result);
   }
 
   public async deleteByPattern(pattern: string): Promise<void> {
@@ -132,15 +127,23 @@ export class RedisService
   public async incrBy(
     key: string,
     value = 1,
-    option?: SetCacheOption<SET_EXPIRE_POLICY>
-  ): Promise<any> {
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number> {
     const result = await this._redis.incrby(key, value);
 
-    if (option) {
-      await this.expire(key, option);
+    if (expiryOptions) {
+      await this.expire(key, expiryOptions);
     }
 
-    return result;
+    return this.convertToNumber(result);
+  }
+
+  protected convertToNumber(value: any): number {
+    const number = parseFloat(value);
+    if (isNaN(number)) {
+      throw new Error(`Value "${value}" is not a valid number.`);
+    }
+    return number;
   }
 
   public expire(
@@ -176,28 +179,28 @@ export class RedisService
   public async incrByFloat(
     key: string,
     value: number,
-    option?: SetCacheOption<SET_EXPIRE_POLICY>
-  ): Promise<any> {
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number> {
     const result = await this._redis.incrbyfloat(key, value);
 
-    if (option) {
-      await this.expire(key, option);
+    if (expiryOptions) {
+      await this.expire(key, expiryOptions);
     }
 
-    return result;
+    return this.convertToNumber(result);
   }
 
   public async decrBy(
     key: string,
     value = 1,
-    option?: SetCacheOption<SET_EXPIRE_POLICY>
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
   ): Promise<any> {
     const result = await this._redis.decrby(key, value);
 
-    if (option) {
-      await this.expire(key, option);
+    if (expiryOptions) {
+      await this.expire(key, expiryOptions);
     }
 
-    return result;
+    return this.convertToNumber(result);
   }
 }

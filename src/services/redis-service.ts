@@ -40,6 +40,26 @@ export class RedisService
     return number;
   }
 
+  public async deleteByPattern(pattern: string): Promise<void> {
+    let cursor = "0";
+
+    do {
+      const [nextCursor, keys] = await this._redis.scan(
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        100 // adjust batch size as needed
+      );
+
+      cursor = nextCursor;
+
+      if (keys.length > 0) {
+        await this._redis.del(...keys);
+      }
+    } while (cursor !== "0");
+  }
+
   public async del(...keys: string[]): Promise<void> {
     await this._redis.del(...keys);
   }

@@ -112,13 +112,22 @@ export class RedisService
 
     switch (option.policy) {
       case SET_CACHE_POLICY.WITH_TTL:
-        return this._redis.set(key, value, "EX", option.value);
+        return this._redis.set(key, value, "EX", option.value); // TTL in seconds
+
       case SET_CACHE_POLICY.KEEP_TTL:
         return this._redis.set(key, value, "KEEPTTL");
+
       case SET_CACHE_POLICY.IF_EXISTS:
-        return this._redis.set(key, value, "XX");
+        // Set only if exists, with optional TTL
+        return option.value
+          ? this._redis.set(key, value, "EX", option.value, "XX")
+          : this._redis.set(key, value, "XX");
+
       case SET_CACHE_POLICY.IF_NOT_EXISTS:
-        return this._redis.set(key, value, "NX");
+        return option.value
+          ? this._redis.set(key, value, "EX", option.value, "NX")
+          : this._redis.set(key, value, "NX");
+
       default:
         throw new Error("policy not supported");
     }

@@ -109,7 +109,11 @@ export interface CacheService {
   get(key: string): Promise<any>;
   set(key: string, value: any, option?: SetCacheOption): Promise<any>;
   del(...keys: string[]): Promise<void>;
-  incrBy(key: string, value?: number): Promise<number>;
+  incrBy(
+    key: string,
+    value: number,
+    expiryOptions?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number>;
   incrByFloat(
     key: string,
     value: number,

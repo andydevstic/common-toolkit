@@ -7,7 +7,7 @@ import {
   ListCacheService,
   SetCacheOption,
 } from "../interfaces";
-import { SET_CACHE_POLICY } from "../constants";
+import { SET_CACHE_POLICY, SET_EXPIRE_POLICY } from "../constants";
 
 export class RedisService
   implements
@@ -109,19 +109,75 @@ export class RedisService
     }
   }
 
-  public incrBy(key: string, value = 1): Promise<any> {
-    return this._redis.incrby(key, value);
+  public async incrBy(
+    key: string,
+    value = 1,
+    option?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<any> {
+    const result = await this._redis.incrby(key, value);
+
+    if (option) {
+      await this.expire(key, option);
+    }
+
+    return result;
   }
 
-  public expire(key: string, seconds: number): Promise<any> {
-    return this._redis.expire(key, seconds);
+  public expire(
+    key: string,
+    option: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<number> {
+    let expireOption: "NX" | "XX" | "GT" | "LT" | undefined;
+
+    if (option) {
+      switch (option.policy) {
+        case SET_EXPIRE_POLICY.GREATER_THAN:
+          expireOption = "GT";
+          break;
+        case SET_EXPIRE_POLICY.LESS_THAN:
+          expireOption = "LT";
+          break;
+        case SET_EXPIRE_POLICY.IF_EXISTS:
+          expireOption = "XX";
+          break;
+        case SET_EXPIRE_POLICY.IF_NOT_EXISTS:
+          expireOption = "NX";
+          break;
+      }
+    }
+
+    if (expireOption) {
+      return this._redis.expire(key, option.value, expireOption as any);
+    }
+
+    return this._redis.expire(key, option.value);
   }
 
-  public incrByFloat(key: string, value: number): Promise<any> {
-    return this._redis.incrbyfloat(key, value);
+  public async incrByFloat(
+    key: string,
+    value: number,
+    option?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<any> {
+    const result = await this._redis.incrbyfloat(key, value);
+
+    if (option) {
+      await this.expire(key, option);
+    }
+
+    return result;
   }
 
-  public decrBy(key: string, value = 1): Promise<any> {
-    return this._redis.decrby(key, value);
+  public async decrBy(
+    key: string,
+    value = 1,
+    option?: SetCacheOption<SET_EXPIRE_POLICY>
+  ): Promise<any> {
+    const result = await this._redis.decrby(key, value);
+
+    if (option) {
+      await this.expire(key, option);
+    }
+
+    return result;
   }
 }

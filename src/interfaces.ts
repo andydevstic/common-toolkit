@@ -141,8 +141,8 @@ export interface CRUDService<T = any> {
   findById(userId: any, ...options: any[]): Promise<T>;
 }
 
-export interface SetCacheOption {
-  policy: SET_CACHE_POLICY;
+export interface SetCacheOption<Policy = SET_CACHE_POLICY> {
+  policy: Policy;
   value?: any;
 }
 export interface IMessageQueueService {

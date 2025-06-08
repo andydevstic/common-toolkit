@@ -26,10 +26,10 @@ export class RedisService
     return this._redis.get(key);
   }
 
-  public async getNumber(key: string): Promise<number | undefined> {
+  public async getNumber(key: string): Promise<number | null> {
     const result = await this._redis.get(key);
     if (result === null) {
-      return undefined;
+      return null;
     }
 
     return this.convertToNumber(result);

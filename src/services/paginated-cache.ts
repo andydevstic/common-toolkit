@@ -98,7 +98,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     cacheKey: string,
     data: PaginationResult<T>,
     ttl: number = 60 * 30 // Default TTL is 30 minutes
-  ): Promise<void> {
+  ): Promise<any> {
     const currentVersion = await this.getCurrentVersion();
 
     const versionedCacheKey = getVersionedCacheKey(cacheKey, currentVersion);
@@ -107,7 +107,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
 
     // in case two processes try to set the same versioned cache key at the same time,
     // we use IF_NOT_EXISTS policy to avoid overwriting the cache
-    await this.cacheService.set(versionedCacheKey, cacheableData, {
+    return this.cacheService.set(versionedCacheKey, cacheableData, {
       policy: SET_CACHE_POLICY.IF_NOT_EXISTS,
       value: ttl, // Set versioned cache key to expire in 30 minutes
     });

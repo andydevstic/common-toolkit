@@ -6,7 +6,11 @@ export class PaginatedCacheRegistry {
 
   constructor(protected cacheService: CacheService) {}
 
-  public createPaginatedCache<T = any>(
+  public has(dataName: string): boolean {
+    return this._registry.has(dataName);
+  }
+
+  public getOrCreatePaginatedCache<T = any>(
     dataName: string
   ): IPaginatedDataCache<T> {
     if (this._registry.has(dataName)) {

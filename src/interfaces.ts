@@ -133,6 +133,11 @@ export interface CacheService {
 }
 
 export interface IPaginatedDataCache<T = any> {
+  generateCacheKey(
+    filter?: Record<string, any>,
+    limit?: number,
+    offset?: number
+  ): string;
   getCurrentVersion(): Promise<number>;
   getCachedPaginatedData(
     filter: Record<string, any>,

@@ -27,9 +27,9 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     return `paginated-cache:${this.dataName}:version:_version:filter:${filterString}:limit:${limit}:offset:${offset}`;
   };
 
-  public async getCurrentVersion(cacheKey: string): Promise<number> {
+  public async getCurrentVersion(): Promise<number> {
     const result = await this.cacheService.getNumber(
-      getVersionCacheKeyForKey(cacheKey)
+      getVersionCacheKeyForKey(this._cacheKeyFactory())
     );
 
     return result || 0;
@@ -54,7 +54,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     ttlInSecs = 60 * 30 // Default TTL is 30 minutes
   ): Promise<void> {
     const cacheKey = this._cacheKeyFactory(filter, limit, offset);
-    const currentVersion = await this.getCurrentVersion(cacheKey);
+    const currentVersion = await this.getCurrentVersion();
     if (currentVersion === 0) {
       // If current version is 0, we need to increment it first
       await this.incrementCacheVersion(ttlInSecs);
@@ -68,8 +68,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     _overrideVersion?: number
   ): Promise<{ currentVersion: number; data: PaginationResult<T> | null }> {
     // Example: if cacheKey is 'user:123:profile', the version cache key will be 'user:123:profile:version'
-    const currentVersion =
-      _overrideVersion ?? (await this.getCurrentVersion(cacheKey));
+    const currentVersion = _overrideVersion ?? (await this.getCurrentVersion());
     if (currentVersion === 0) {
       // Data is not yet set. If data is set, version should be 1
       return {
@@ -100,7 +99,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     data: PaginationResult<T>,
     ttl: number = 60 * 30 // Default TTL is 30 minutes
   ): Promise<void> {
-    const currentVersion = await this.getCurrentVersion(cacheKey);
+    const currentVersion = await this.getCurrentVersion();
 
     const versionedCacheKey = getVersionedCacheKey(cacheKey, currentVersion);
     const cacheableData =

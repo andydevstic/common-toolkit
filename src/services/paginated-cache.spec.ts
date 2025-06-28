@@ -83,7 +83,7 @@ describe("paginated cache", () => {
       data
     );
 
-    const currentVersion = await paginatedDataCache.getCurrentVersion(cacheKey);
+    const currentVersion = await paginatedDataCache.getCurrentVersion();
     expect(currentVersion).to.equal(1, "Initial version should be 1");
 
     const cachedData = await paginatedDataCache.getCachedPaginatedData(
@@ -92,7 +92,7 @@ describe("paginated cache", () => {
       offset
     );
 
-    const newVersion = await paginatedDataCache.getCurrentVersion(cacheKey);
+    const newVersion = await paginatedDataCache.getCurrentVersion();
 
     expect(newVersion).to.equal(1, "Version should still be 1");
     expect(cachedData).to.deep.equal(data, "Cached data should match set data");
@@ -121,7 +121,7 @@ describe("paginated cache", () => {
       offset,
       data1
     );
-    const initialVersion = await paginatedDataCache.getCurrentVersion(cacheKey);
+    const initialVersion = await paginatedDataCache.getCurrentVersion();
     expect(initialVersion).to.equal(1, "Initial version should be 1");
     const cachedData1 = await paginatedDataCache.getCachedPaginatedData(
       filter,
@@ -138,7 +138,7 @@ describe("paginated cache", () => {
       offset,
       data2
     );
-    const newVersion = await paginatedDataCache.getCurrentVersion(cacheKey);
+    const newVersion = await paginatedDataCache.getCurrentVersion();
     expect(newVersion).to.equal(1, "Version should still be 1 after override");
     const cachedData2 = await paginatedDataCache.getCachedPaginatedData(
       filter,
@@ -184,7 +184,7 @@ describe("paginated cache", () => {
       data2
     );
 
-    const initialVersion = await paginatedDataCache.getCurrentVersion(cacheKey);
+    const initialVersion = await paginatedDataCache.getCurrentVersion();
     expect(initialVersion).to.equal(1, "Initial version should be 1");
 
     const cachedData1 = await paginatedDataCache.getCachedPaginatedData(
@@ -271,11 +271,8 @@ describe("paginated cache", () => {
       data2
     );
 
-    const data1Version = await paginatedDataCache.getCurrentVersion(cacheKey1);
-    const data2Version = await paginatedDataCache.getCurrentVersion(cacheKey2);
-
-    expect(data1Version).to.equal(1, "Filter1 version should be 1");
-    expect(data2Version).to.equal(1, "Filter2 version should be 1");
+    const currentVersion = await paginatedDataCache.getCurrentVersion();
+    expect(currentVersion).to.equal(1, "Filter2 version should be 1");
 
     const cachedData1 = await paginatedDataCache.getCachedPaginatedData(
       filter1,
@@ -332,9 +329,7 @@ describe("paginated cache", () => {
       data1
     );
 
-    const currentVersion = await paginatedDataCache.getCurrentVersion(
-      paginatedDataCache._cacheKeyFactory(filter, limit, offset)
-    );
+    const currentVersion = await paginatedDataCache.getCurrentVersion();
     expect(currentVersion).to.equal(1, "Initial version should be 1");
 
     const cachedData = await paginatedDataCache.getCachedPaginatedData(
@@ -366,9 +361,8 @@ describe("paginated cache", () => {
       data2
     );
 
-    const nextVersion = await paginatedDataCache.getCurrentVersion(
-      paginatedDataCache._cacheKeyFactory(filter, limit, offset + limit)
-    );
+    const nextVersion = await paginatedDataCache.getCurrentVersion();
+
     expect(nextVersion).to.equal(1, "Next page version should be 1");
 
     const nextCachedData = await paginatedDataCache.getCachedPaginatedData(
@@ -423,9 +417,7 @@ describe("paginated cache", () => {
       offset,
       newData1
     );
-    const newCurrentVersion = await paginatedDataCache.getCurrentVersion(
-      paginatedDataCache._cacheKeyFactory(filter, limit, offset)
-    );
+    const newCurrentVersion = await paginatedDataCache.getCurrentVersion();
     expect(newCurrentVersion).to.equal(2, "New version should be 2");
 
     const newCachedData = await paginatedDataCache.getCachedPaginatedData(
@@ -507,9 +499,7 @@ describe("paginated cache", () => {
       "First row of next page should be Charlie"
     );
 
-    const version = await paginatedDataCache.getCurrentVersion(
-      paginatedDataCache._cacheKeyFactory(filter, limit, offset + limit)
-    );
+    const version = await paginatedDataCache.getCurrentVersion();
     expect(version).to.equal(1, "Next page version should be 1");
 
     await paginatedDataCache.incrementCacheVersion();

@@ -133,7 +133,7 @@ export interface CacheService {
 }
 
 export interface IPaginatedDataCache<T = any> {
-  getCurrentVersion(cacheKey: string): Promise<number>;
+  getCurrentVersion(): Promise<number>;
   getCachedPaginatedData(
     filter: Record<string, any>,
     limit: number,

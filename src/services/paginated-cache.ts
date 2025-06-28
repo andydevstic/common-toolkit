@@ -17,7 +17,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     protected cacheService: CacheService
   ) {}
 
-  public _cacheKeyFactory = (
+  public generateCacheKey = (
     filter: Record<string, any> = {},
     limit = 10,
     offset = 0
@@ -29,7 +29,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
 
   public async getCurrentVersion(): Promise<number> {
     const result = await this.cacheService.getNumber(
-      getVersionCacheKeyForKey(this._cacheKeyFactory())
+      getVersionCacheKeyForKey(this.generateCacheKey())
     );
 
     return result || 0;
@@ -40,7 +40,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     limit: number,
     offset: number
   ): Promise<PaginationResult<T>> {
-    const cacheKey = this._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = this.generateCacheKey(filter, limit, offset);
     const { data } = await this._fetchVersionedDataFromCache(cacheKey);
 
     return data;
@@ -53,7 +53,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     data: PaginationResult<T>,
     ttlInSecs = 60 * 30 // Default TTL is 30 minutes
   ): Promise<void> {
-    const cacheKey = this._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = this.generateCacheKey(filter, limit, offset);
     const currentVersion = await this.getCurrentVersion();
     if (currentVersion === 0) {
       // If current version is 0, we need to increment it first
@@ -114,7 +114,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
   }
 
   public async incrementCacheVersion(ttl = 60 * 60 * 24): Promise<number> {
-    const cacheKey = this._cacheKeyFactory();
+    const cacheKey = this.generateCacheKey();
     const versionCacheKey = getVersionCacheKeyForKey(cacheKey);
 
     return this.cacheService.incrBy(versionCacheKey, 1, {

@@ -53,7 +53,7 @@ describe("paginated cache", () => {
     const limit = 10;
     const offset = 100;
 
-    const cacheKey = paginatedDataCache._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = paginatedDataCache.generateCacheKey(filter, limit, offset);
     const filterHash = generateHashFromJSON(filter);
     const expectedKey = `paginated-cache:users:version:_version:filter:${filterHash}:limit:${limit}:offset:${offset}`;
 
@@ -74,7 +74,7 @@ describe("paginated cache", () => {
       offset,
     };
 
-    const cacheKey = paginatedDataCache._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = paginatedDataCache.generateCacheKey(filter, limit, offset);
 
     await paginatedDataCache.setCachedPaginatedData(
       filter,
@@ -114,7 +114,7 @@ describe("paginated cache", () => {
       limit,
       offset,
     };
-    const cacheKey = paginatedDataCache._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = paginatedDataCache.generateCacheKey(filter, limit, offset);
     await paginatedDataCache.setCachedPaginatedData(
       filter,
       limit,
@@ -156,7 +156,7 @@ describe("paginated cache", () => {
     const filter2 = { country: "usa", age: 25 };
     const limit = 10;
     const offset = 100;
-    const cacheKey = paginatedDataCache._cacheKeyFactory(filter, limit, offset);
+    const cacheKey = paginatedDataCache.generateCacheKey(filter, limit, offset);
 
     const data1 = {
       rows: [{ id: 1, name: "Andy" }],
@@ -232,12 +232,12 @@ describe("paginated cache", () => {
     const limit = 10;
     const offset = 100;
 
-    const cacheKey1 = paginatedDataCache._cacheKeyFactory(
+    const cacheKey1 = paginatedDataCache.generateCacheKey(
       filter1,
       limit,
       offset
     );
-    const cacheKey2 = paginatedDataCache._cacheKeyFactory(
+    const cacheKey2 = paginatedDataCache.generateCacheKey(
       filter2,
       limit,
       offset

@@ -35,6 +35,7 @@
     "core-js": "^3.30.2",
     "dayjs": "^1.11.9",
     "exceljs": "^4.3.0",
+    "fast-json-stable-stringify": "^2.1.0",
     "geoip-country": "^4.2.62",
     "ioredis": "^5.3.2",
     "kafkajs": "^2.2.4",

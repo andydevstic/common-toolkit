@@ -5,3 +5,4 @@ export * from "./kafka-service";
 export * from "./redis-service";
 export * from "./security-service";
 export * from "./http-service";
+export * from "./paginated-cache";

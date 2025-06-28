@@ -132,6 +132,29 @@ export interface CacheService {
   ): Promise<number>;
 }
 
+export interface IPaginatedDataCache<T = any> {
+  getCurrentVersion(cacheKey: string): Promise<number>;
+  getCachedPaginatedData(
+    filter: Record<string, any>,
+    limit: number,
+    offset: number
+  ): Promise<PaginationResult<T>>;
+  setCachedPaginatedData(
+    filter: Record<string, any>,
+    limit: number,
+    offset: number,
+    data: PaginationResult<T>,
+    ttlInSecs?: number
+  ): Promise<void>;
+  incrementCacheVersion(cacheKey: string, ttl?: number): Promise<number>;
+}
+export interface PaginationResult<T = any> {
+  rows: T[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
 export interface HashCacheService {
   hset(key: string, field: string, value: any): Promise<void>;
   hget(key: string, field: string): Promise<string>;

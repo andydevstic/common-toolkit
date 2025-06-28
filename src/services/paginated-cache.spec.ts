@@ -438,4 +438,92 @@ describe("paginated cache", () => {
       "New cached paginated data should match expected data"
     );
   });
+
+  it("should gives null if next page data is not set", async () => {
+    const filter = { country: "vietnam", age: 30 };
+    const limit = 2;
+    const offset = 0;
+
+    const data = [
+      { id: 1, name: "Andy" },
+      { id: 2, name: "Bob" },
+      { id: 3, name: "Charlie" },
+      { id: 4, name: "David" },
+      { id: 5, name: "Eve" },
+    ];
+
+    await paginatedDataCache.setCachedPaginatedData(filter, limit, offset, {
+      rows: data.slice(0, limit),
+      total: data.length,
+      limit,
+      offset,
+    });
+    const cachedData = await paginatedDataCache.getCachedPaginatedData(
+      filter,
+      limit,
+      offset
+    );
+    expect(cachedData).to.not.be.null;
+    expect(cachedData.rows.length).to.equal(
+      limit,
+      "Should return correct number of rows"
+    );
+    expect(cachedData.rows[0].name).to.equal(
+      "Andy",
+      "First row should be Andy"
+    );
+
+    const nextPageData = await paginatedDataCache.getCachedPaginatedData(
+      filter,
+      limit,
+      offset + limit
+    );
+    expect(nextPageData).to.be.null;
+
+    await paginatedDataCache.setCachedPaginatedData(
+      filter,
+      limit,
+      offset + limit,
+      {
+        rows: data.slice(limit, limit * 2),
+        total: data.length,
+        limit,
+        offset: limit,
+      }
+    );
+
+    const nextCachedData = await paginatedDataCache.getCachedPaginatedData(
+      filter,
+      limit,
+      offset + limit
+    );
+    expect(nextCachedData).to.not.be.null;
+    expect(nextCachedData.rows.length).to.equal(
+      limit,
+      "Next page should return correct number of rows"
+    );
+    expect(nextCachedData.rows[0].name).to.equal(
+      "Charlie",
+      "First row of next page should be Charlie"
+    );
+
+    const version = await paginatedDataCache.getCurrentVersion(
+      paginatedDataCache._cacheKeyFactory(filter, limit, offset + limit)
+    );
+    expect(version).to.equal(1, "Next page version should be 1");
+
+    await paginatedDataCache.incrementCacheVersion();
+    const oldCachedData = await paginatedDataCache.getCachedPaginatedData(
+      filter,
+      limit,
+      offset
+    );
+    expect(oldCachedData).to.be.null;
+    const oldNextCachedData = await paginatedDataCache.getCachedPaginatedData(
+      filter,
+      limit,
+      offset + limit
+    );
+    expect(oldNextCachedData).to.be.null;
+  });
 });

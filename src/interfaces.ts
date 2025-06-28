@@ -150,7 +150,7 @@ export interface IPaginatedDataCache<T = any> {
     offset: number,
     data: PaginationResult<T>,
     ttlInSecs?: number
-  ): Promise<void>;
+  ): Promise<any>;
   incrementCacheVersion(ttl?: number): Promise<number>;
 }
 export interface PaginationResult<T = any> {

@@ -52,7 +52,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     offset: number,
     data: PaginationResult<T>,
     ttlInSecs = 60 * 30 // Default TTL is 30 minutes
-  ): Promise<void> {
+  ): Promise<any> {
     const cacheKey = this.generateCacheKey(filter, limit, offset);
     const currentVersion = await this.getCurrentVersion();
     if (currentVersion === 0) {

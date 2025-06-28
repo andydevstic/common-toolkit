@@ -146,7 +146,7 @@ export interface IPaginatedDataCache<T = any> {
     data: PaginationResult<T>,
     ttlInSecs?: number
   ): Promise<void>;
-  incrementCacheVersion(cacheKey: string, ttl?: number): Promise<number>;
+  incrementCacheVersion(ttl?: number): Promise<number>;
 }
 export interface PaginationResult<T = any> {
   rows: T[];

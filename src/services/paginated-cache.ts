@@ -57,7 +57,7 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     const currentVersion = await this.getCurrentVersion(cacheKey);
     if (currentVersion === 0) {
       // If current version is 0, we need to increment it first
-      await this.incrementCacheVersion(cacheKey, ttlInSecs);
+      await this.incrementCacheVersion(ttlInSecs);
     }
 
     return this._setVersionedDataInCache(cacheKey, data, ttlInSecs);
@@ -114,10 +114,8 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     });
   }
 
-  public async incrementCacheVersion(
-    cacheKey: string,
-    ttl = 60 * 60 * 24
-  ): Promise<number> {
+  public async incrementCacheVersion(ttl = 60 * 60 * 24): Promise<number> {
+    const cacheKey = this._cacheKeyFactory();
     const versionCacheKey = getVersionCacheKeyForKey(cacheKey);
 
     return this.cacheService.incrBy(versionCacheKey, 1, {

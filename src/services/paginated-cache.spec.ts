@@ -207,7 +207,7 @@ describe("paginated cache", () => {
       "Initial cached data2 should match"
     );
 
-    const newVersion = await paginatedDataCache.incrementCacheVersion(cacheKey);
+    const newVersion = await paginatedDataCache.incrementCacheVersion();
 
     expect(newVersion).to.equal(2, "Version should be incremented to 2");
 
@@ -381,9 +381,7 @@ describe("paginated cache", () => {
       "Next page cached data should match expected data"
     );
 
-    await paginatedDataCache.incrementCacheVersion(
-      paginatedDataCache._cacheKeyFactory(filter, limit, offset)
-    );
+    await paginatedDataCache.incrementCacheVersion();
 
     const oldCachedData = await paginatedDataCache.getCachedPaginatedData(
       filter,

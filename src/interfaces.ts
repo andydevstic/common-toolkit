@@ -164,6 +164,9 @@ export interface HashCacheService {
   hset(key: string, field: string, value: any): Promise<void>;
   hget(key: string, field: string): Promise<string>;
   hlen(key: string): Promise<number>;
+  hincrbyfloat(key: string, field: string, value?: number): Promise<string>;
+  hincrby(key: string, field: string, value?: number): Promise<number>;
+  hkeys(key: string): Promise<string[]>;
 }
 
 export interface ListCacheService {

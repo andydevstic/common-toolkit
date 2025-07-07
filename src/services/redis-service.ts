@@ -101,6 +101,22 @@ export class RedisService
     return this._redis.hget(key, field);
   }
 
+  public async hincrby(key: string, field: string, value = 1): Promise<number> {
+    return this._redis.hincrby(key, field, value);
+  }
+
+  public async hincrbyfloat(
+    key: string,
+    field: string,
+    value = 1
+  ): Promise<string> {
+    return this._redis.hincrbyfloat(key, field, value);
+  }
+
+  public async hkeys(key: string): Promise<string[]> {
+    return this._redis.hkeys(key);
+  }
+
   public async hlen(key: string): Promise<number> {
     return this._redis.hlen(key);
   }

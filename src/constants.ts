@@ -18,13 +18,6 @@ export enum SET_CACHE_POLICY {
   IF_NOT_EXISTS,
 }
 
-export enum SET_EXPIRE_POLICY {
-  IF_EXISTS,
-  IF_NOT_EXISTS,
-  GREATER_THAN,
-  LESS_THAN,
-}
-
 export enum APP_ENV {
   DEVELOPMENT = "development",
   STAGING = "staging",

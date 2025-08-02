@@ -105,6 +105,7 @@ export interface InternalServiceAuthResult {
 }
 
 export interface CacheService {
+  ttl(key: string): Promise<number>;
   get(key: string): Promise<any>;
   set(key: string, value: any, option?: SetCacheOption): Promise<any>;
   del(...keys: string[]): Promise<void>;

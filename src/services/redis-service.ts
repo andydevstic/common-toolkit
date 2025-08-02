@@ -117,6 +117,10 @@ export class RedisService
     return this._redis.hkeys(key);
   }
 
+  public async ttl(key: string): Promise<number> {
+    return this._redis.ttl(key);
+  }
+
   public async hlen(key: string): Promise<number> {
     return this._redis.hlen(key);
   }

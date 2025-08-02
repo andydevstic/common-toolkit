@@ -117,9 +117,6 @@ export class PaginatedDataCache<T = any> implements IPaginatedDataCache<T> {
     const cacheKey = this.generateCacheKey();
     const versionCacheKey = getVersionCacheKeyForKey(cacheKey);
 
-    return this.cacheService.incrBy(versionCacheKey, 1, {
-      policy: undefined,
-      value: ttl,
-    });
+    return this.cacheService.incrBy(versionCacheKey, 1);
   }
 }

@@ -17,8 +17,10 @@ export class AxiosHttpService implements HttpService {
     url: string,
     options: HttpRequestOption = {}
   ): Promise<OperationResult<T>> {
+    let response: any;
+
     try {
-      const response = await axios.request({
+      response = await axios.request({
         method,
         url,
         headers: options.headers,
@@ -40,13 +42,19 @@ export class AxiosHttpService implements HttpService {
         data: response.data,
       };
     } catch (error: any) {
-      this.logger.error(error.message, error.stack);
+      const errMsg =
+        error.message || response.data?.message || "error sending http request";
+
+      const errDetails = response.data?.data ||
+        response.data || { stack: error.stack };
+      this.logger.error(errMsg, JSON.stringify(errDetails));
 
       // Due to timeout
       if (error?.code && error.code === APP_ERROR.HTTP_REQ_TIMEOUT) {
         return {
           success: false,
           code: APP_ERROR.HTTP_REQ_TIMEOUT,
+          httpCode: 408,
           message: "request timeout",
         };
       }
@@ -54,6 +62,7 @@ export class AxiosHttpService implements HttpService {
       return {
         success: false,
         message: error.message,
+        data: response.data,
       };
     }
   }

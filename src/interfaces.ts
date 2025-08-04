@@ -163,11 +163,7 @@ export interface ListCacheService {
   llen(key: string): Promise<number>;
 }
 
-export type LuaCall = [
-  script: string,
-  numberOfKeys: number,
-  ...(string | number)[]
-];
+export type LuaCall = [script: string, numberOfKeys: number, ...any[]];
 
 export interface CacheScriptEvaluator {
   eval(script: string, numberOfKeys: number, ...args: any[]): Promise<any>;

@@ -7,6 +7,43 @@ end
 return redis.call("GET", KEYS[1])
 `;
 
+export const IncrByAndEnsureTTLIsSet = `
+local inc  = tonumber(ARGV[1])
+local ttl = tonumber(ARGV[2])
+
+redis.call("INCRBY", KEYS[1], inc)
+
+if redis.call("TTL", KEYS[1]) == -1 then
+  redis.call("EXPIRE", KEYS[1], ttl)
+end
+
+return tonumber(redis.call("GET", KEYS[1]))
+`;
+export const DecrByAndEnsureTTLIsSet = `
+local inc  = tonumber(ARGV[1])
+local ttl = tonumber(ARGV[2])
+
+redis.call("DECRBY", KEYS[1], inc)
+
+if redis.call("TTL", KEYS[1]) == -1 then
+  redis.call("EXPIRE", KEYS[1], ttl)
+end
+
+return tonumber(redis.call("GET", KEYS[1]))
+`;
+export const IncrByFloatAndEnsureTTLIsSet = `
+local inc  = tonumber(ARGV[1])
+local ttl = tonumber(ARGV[2])
+
+redis.call("INCRBYFLOAT", KEYS[1], inc)
+
+if redis.call("TTL", KEYS[1]) == -1 then
+  redis.call("EXPIRE", KEYS[1], ttl)
+end
+
+return tonumber(redis.call("GET", KEYS[1]))
+`;
+
 export const IncrByIfExists = `
 if redis.call("EXISTS", KEYS[1]) == 1 then
   redis.call("INCRBY", KEYS[1], ARGV[1])

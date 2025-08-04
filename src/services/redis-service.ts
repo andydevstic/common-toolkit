@@ -5,6 +5,7 @@ import {
   CacheService,
   HashCacheService,
   ListCacheService,
+  LuaCall,
   SetCacheOption,
 } from "../interfaces";
 import { SET_CACHE_POLICY } from "../constants";
@@ -57,6 +58,29 @@ export class RedisService
 
   public async del(...keys: string[]): Promise<void> {
     await this._redis.del(...keys);
+  }
+
+  public async multiEval(calls: LuaCall[]): Promise<any[]> {
+    const multi = this._redis.multi();
+
+    for (const [script, numberOfKeys, ...params] of calls) {
+      if (numberOfKeys !== params.slice(0, numberOfKeys).length) {
+        throw new Error(
+          `numberOfKeys (${numberOfKeys}) does not match key count in params`
+        );
+      }
+      multi.eval(script, numberOfKeys, ...params);
+    }
+
+    const execResult = await multi.exec();
+
+    // bubble up the first Redis-side error, if any
+    for (const [err] of execResult) {
+      if (err) throw err;
+    }
+
+    // unwrap the values
+    return execResult.map(([, value]) => value);
   }
 
   public async eval(script: string, numberOfKeys: number, ...args: any[]) {

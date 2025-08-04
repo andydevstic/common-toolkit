@@ -15,3 +15,4 @@ export * as referralTreeHelpers from "./referral-tree-utils";
 export * as timeoutHelper from "./task-helper";
 export * as cacheHelper from "./paginated-cache-registry";
 export * as encryptionHelper from "./encryption-helper";
+export * as scripts from "./scripts";

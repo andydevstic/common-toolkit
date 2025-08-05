@@ -64,7 +64,7 @@ export class AxiosHttpService implements HttpService {
       return {
         success: false,
         message: error.message,
-        data: response.data,
+        data: response?.data || {},
       };
     }
   }

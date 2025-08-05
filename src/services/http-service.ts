@@ -43,11 +43,13 @@ export class AxiosHttpService implements HttpService {
       };
     } catch (error: any) {
       const errMsg =
-        error.message || response.data?.message || "error sending http request";
+        error?.message ||
+        response?.data?.message ||
+        "error sending http request";
 
       const errDetails = response.data?.data ||
         response.data || { stack: error.stack };
-      this.logger.error(errMsg, JSON.stringify(errDetails));
+      this.logger.error(error);
 
       // Due to timeout
       if (error?.code && error.code === APP_ERROR.HTTP_REQ_TIMEOUT) {

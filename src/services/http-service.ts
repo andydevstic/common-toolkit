@@ -47,9 +47,9 @@ export class AxiosHttpService implements HttpService {
         response?.data?.message ||
         "error sending http request";
 
-      const errDetails = response.data?.data ||
-        response.data || { stack: error.stack };
-      this.logger.error(error);
+      const errDetails = response?.data?.data ||
+        response?.data || { stack: error.stack };
+      this.logger.error(errMsg, errDetails);
 
       // Due to timeout
       if (error?.code && error.code === APP_ERROR.HTTP_REQ_TIMEOUT) {

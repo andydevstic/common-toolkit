@@ -157,6 +157,11 @@ export interface HashCacheService {
 export interface ListCacheService {
   lpush(key: string, value: any): Promise<void>;
   lset(key: string, index: number, value: any): Promise<void>;
+  lrem(
+    key: string,
+    count: string | number,
+    element: string | Buffer | number
+  ): Promise<number>;
   rpush(key: string, value: any): Promise<void>;
   lrange(key: string, start: number, end: number): Promise<string[]>;
   lindex(key: string, index: number): Promise<string>;

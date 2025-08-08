@@ -97,6 +97,14 @@ export class RedisService
     await this._redis.lpush(key, value);
   }
 
+  public async lrem(
+    key: string,
+    count: string | number,
+    element: string | Buffer | number
+  ): Promise<number> {
+    return this._redis.lrem(key, count, element);
+  }
+
   public async rpush(key: string, value: any): Promise<void> {
     await this._redis.rpush(key, value);
   }

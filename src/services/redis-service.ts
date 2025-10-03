@@ -3,6 +3,7 @@ import * as ioredis from "ioredis";
 import {
   CacheScriptEvaluator,
   CacheService,
+  DeleteByPatternOptions,
   HashCacheService,
   ListCacheService,
   LuaCall,
@@ -36,14 +37,25 @@ export class RedisService
     return this.convertToNumber(result);
   }
 
-  public async deleteByPattern(pattern: string): Promise<void> {
+  public async deleteByPattern(
+    deletePattern: string,
+    options?: DeleteByPatternOptions
+  ): Promise<void> {
     let cursor = "0";
+    const prefix = this._redis.options.keyPrefix;
+
+    let scanPattern = deletePattern;
+
+    if (options?.includePrefixInScanPattern ?? true) {
+      scanPattern = prefix + deletePattern;
+    }
 
     do {
+      // TODO: ScanStream for multiple-node Redis cluster
       const [nextCursor, keys] = await this._redis.scan(
         cursor,
         "MATCH",
-        pattern,
+        scanPattern,
         "COUNT",
         100 // adjust batch size as needed
       );
@@ -51,7 +63,16 @@ export class RedisService
       cursor = nextCursor;
 
       if (keys.length > 0) {
-        await this._redis.del(...keys);
+        const dupPrefixRemovedKeys = prefix
+          ? keys.map((k) => (k.startsWith(prefix) ? k.slice(prefix.length) : k))
+          : keys;
+
+        // TODO: Chunk this for better load
+        if (typeof (this._redis as any).unlink === "function") {
+          await (this._redis as any).unlink(...dupPrefixRemovedKeys);
+        } else {
+          await this._redis.del(...dupPrefixRemovedKeys);
+        }
       }
     } while (cursor !== "0");
   }

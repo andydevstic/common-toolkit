@@ -104,6 +104,10 @@ export interface InternalServiceAuthResult {
   type: "internal" | "external";
 }
 
+export interface DeleteByPatternOptions {
+  includePrefixInScanPattern: boolean;
+}
+
 export interface CacheService {
   ttl(key: string): Promise<number>;
   get(key: string): Promise<any>;

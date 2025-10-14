@@ -9,6 +9,7 @@ export enum STABLE_COIN {
   USDT = "usdt",
   USDV = "usdv",
   USDC = "usdc",
+  BUSD = "busd",
 }
 
 export enum CRYPTO_TOKEN {
@@ -22,6 +23,8 @@ export enum CRYPTO_TOKEN {
   ETH = "eth",
   BNB = "bnb",
   WBNB = "wbnb",
+  BUSD = "busd",
+  BTC = "btc",
 }
 
 export type HttpMethod = "get" | "post" | "put" | "patch" | "delete";

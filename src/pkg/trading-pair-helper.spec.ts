@@ -1,13 +1,16 @@
 // test/normalizePairName.spec.ts
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { normalizePairName } from "./trading-pair-helper";
+import {
+  normalizePairName,
+  arePairNamesSameDirection,
+} from "./trading-pair-helper";
 import { CRYPTO_TOKEN, STABLE_COIN } from "../constants";
 
-describe("normalizePairName (functional factory)", () => {
+describe("normalizePairName (factory)", () => {
   const normalize = normalizePairName(STABLE_COIN, CRYPTO_TOKEN);
 
-  it("places stable coin last when stableCoinRule = 'last' (order-agnostic input)", () => {
+  it("places stable coin last when stableCoinRule='last' (order-agnostic input)", () => {
     const a = normalize("USDTWVPC", {
       stableCoinRule: "last",
       sortOrder: "asc",
@@ -22,7 +25,7 @@ describe("normalizePairName (functional factory)", () => {
     expect(b).to.equal("wvpc/usdt");
   });
 
-  it("places stable coin first when stableCoinRule = 'first'", () => {
+  it("places stable coin first when stableCoinRule='first'", () => {
     const out = normalize("WVPCUSDC", {
       stableCoinRule: "first",
       sortOrder: "asc",
@@ -31,7 +34,7 @@ describe("normalizePairName (functional factory)", () => {
     expect(out).to.equal("usdc/wvpc");
   });
 
-  it("with stableCoinRule = 'default', uses general sort (no special placement)", () => {
+  it("with stableCoinRule='default', uses general sort (no special placement)", () => {
     const outAsc = normalize("WVPCUSDT", {
       stableCoinRule: "default",
       sortOrder: "asc",
@@ -42,24 +45,39 @@ describe("normalizePairName (functional factory)", () => {
       sortOrder: "desc",
       outputFormater: undefined as any,
     });
-    // asc: 'usdt' < 'wvpc' lexicographically
+    // asc: 'usdt' < 'wvpc'
     expect(outAsc).to.equal("usdt/wvpc");
     // desc: 'wvpc' > 'usdt'
     expect(outDesc).to.equal("wvpc/usdt");
   });
 
-  it("strips separators and is case-insensitive", () => {
+  it("supports no-separator inputs", () => {
+    const a = normalize("BTCUSDT", {
+      stableCoinRule: "last",
+      sortOrder: "asc",
+      outputFormater: undefined as any,
+    });
+    const b = normalize("USDTBTC", {
+      stableCoinRule: "last",
+      sortOrder: "asc",
+      outputFormater: undefined as any,
+    });
+    expect(a).to.equal("btc/usdt");
+    expect(b).to.equal("btc/usdt");
+  });
+
+  it("strips common separators and is case-insensitive", () => {
     const a = normalize("ETH/USDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
       outputFormater: undefined as any,
     });
-    const b = normalize("ETH|USDT", {
+    const b = normalize("ETH-USDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
       outputFormater: undefined as any,
     });
-    const c = normalize("wVpCusdT", {
+    const c = normalize("wVpC:usdT", {
       stableCoinRule: "last",
       sortOrder: "asc",
       outputFormater: undefined as any,
@@ -70,7 +88,6 @@ describe("normalizePairName (functional factory)", () => {
   });
 
   it("handles overlapping tokens by preferring longest match (e.g., WETH vs ETH)", () => {
-    // No stable coin here, so general path + sorting
     const outAsc = normalize("WETHETH", {
       stableCoinRule: "default",
       sortOrder: "asc",
@@ -81,12 +98,11 @@ describe("normalizePairName (functional factory)", () => {
       sortOrder: "desc",
       outputFormater: undefined as any,
     });
-    // After longest-first split → parts = ['weth','eth']; then sorted:
-    expect(outAsc).to.equal("eth/weth");
-    expect(outDesc).to.equal("weth/eth");
+    expect(outAsc).to.equal("eth/weth"); // lexicographic asc
+    expect(outDesc).to.equal("weth/eth"); // lexicographic desc
   });
 
-  it("sorts non-stable pairs lexicographically based on sortOrder", () => {
+  it("sorts non-stable pairs lexicographically per sortOrder", () => {
     const outAsc = normalize("BTCETH", {
       stableCoinRule: "default",
       sortOrder: "asc",
@@ -101,7 +117,7 @@ describe("normalizePairName (functional factory)", () => {
     expect(outDesc).to.equal("eth/btc");
   });
 
-  it("passes the separator into the output formatter", () => {
+  it("passes parts to custom formatter (separator change)", () => {
     const out = normalize("WVPCUSDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
@@ -110,7 +126,7 @@ describe("normalizePairName (functional factory)", () => {
     expect(out).to.equal("wvpc-usdt");
   });
 
-  it("supports custom formatter (e.g., uppercase concatenation)", () => {
+  it("supports custom formatter (uppercase concat)", () => {
     const out = normalize("WVPCUSDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
@@ -126,6 +142,45 @@ describe("normalizePairName (functional factory)", () => {
         sortOrder: "asc",
         outputFormater: undefined as any,
       })
-    ).to.throw(/does not contain crypto from list/i);
+    ).to.throw(/pairname does not contain crypto from list/i);
+  });
+
+  it("throws when other token is unknown (e.g., BTC/FOO)", () => {
+    expect(() =>
+      normalize("BTC/FOO", {
+        stableCoinRule: "default",
+        sortOrder: "asc",
+        outputFormater: undefined as any,
+      })
+    ).to.throw(/unknown quote token/i);
+  });
+
+  it("two stable coins with stableCoinRule='default' throws (no crypto path)", () => {
+    expect(() =>
+      normalize("CUSDUSDK", {
+        stableCoinRule: "default",
+        sortOrder: "asc",
+        outputFormater: undefined as any,
+      })
+    ).to.throw(/pairname does not contain crypto from list/i);
+  });
+});
+
+describe("arePairNamesSameDirection", () => {
+  it("treats different separators as same direction", () => {
+    expect(arePairNamesSameDirection("btc/usdt", "btc_usdt")).to.equal(true);
+    expect(arePairNamesSameDirection("WVPC:USDT", "wvpc-usdt")).to.equal(true);
+  });
+
+  it("detects reversed direction", () => {
+    expect(arePairNamesSameDirection("btc/usdt", "usdt/btc")).to.equal(false);
+  });
+
+  it("is case-insensitive", () => {
+    expect(arePairNamesSameDirection("WvPc/UsDt", "wvpc/usdt")).to.equal(true);
+  });
+
+  it("does not treat no-separator as the same (by design)", () => {
+    expect(arePairNamesSameDirection("eth/usdt", "ethusdt")).to.equal(false);
   });
 });

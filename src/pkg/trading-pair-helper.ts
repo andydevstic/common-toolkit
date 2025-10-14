@@ -29,20 +29,18 @@ export const normalizePairName = (
   stableCoinList = STABLE_COIN,
   cryptoList = CRYPTO_TOKEN
 ) => {
-  const stableTokensLower = Object.values(stableCoinList).map((i) =>
-    i.toLowerCase()
-  );
+  const stableTokensLower = Object.values(stableCoinList)
+    .map((s) => s.toLowerCase())
+    .sort((a, b) => b.length - a.length);
+  const cryptoTokensLower = Object.values(cryptoList)
+    .map((s) => s.toLowerCase())
+    .sort((a, b) => b.length - a.length);
+  const TOKENS_SET = new Set([...stableTokensLower, ...cryptoTokensLower]);
+
   const stableRe = new RegExp(
     `(${stableTokensLower.map(regexpEscaper).join("|")})`,
     "i"
   );
-
-  // Keep both raw-lower (for includes) and escaped (for regex)
-  const cryptoTokensLower = Object.values(cryptoList)
-    .map((i) => i.toLowerCase())
-    .sort((a, b) => b.length - a.length); // longest-first to avoid overlaps
-
-  const cryptoTokensEscaped = cryptoTokensLower.map(regexpEscaper);
 
   return (pairName: string, options?: NormalizePairNameOptions): string => {
     const {
@@ -51,41 +49,35 @@ export const normalizePairName = (
       stableCoinRule = "last",
     } = options || {};
 
-    // strip separators and normalize case once
-    const normalized = pairName.replace(/[|/]/g, "").toLowerCase();
-    const parts: string[] = [];
+    const sanitized = pairNameSanitizer(pairName); // e.g. "btc/usdt"
+    const compact = sanitized.replace(/\//g, ""); // e.g. "btcusdt"
 
-    // Stable-coin rule branch
-    const hasStable = stableTokensLower.some((t) => normalized.includes(t));
-    if (stableCoinRule !== "default" && hasStable) {
-      const other = normalized.replace(stableRe, ""); // remove first stable
-      const stable = normalized.replace(other, ""); // remainder is the stable
+    // ---- Stable-coin rule branch ----
+    const m = compact.match(stableRe);
+    if (stableCoinRule !== "default" && m) {
+      const stable = m[0].toLowerCase();
+      const other = compact.replace(new RegExp(regexpEscaper(stable), "i"), "");
+      if (!TOKENS_SET.has(other)) throw new Error("unknown quote token");
       const ordered =
         stableCoinRule === "first" ? [stable, other] : [other, stable];
-
       return outputFormater(ordered);
     }
 
-    // General branch
-    for (let i = 0; i < cryptoTokensLower.length; i++) {
-      const raw = cryptoTokensLower[i];
-      if (normalized.includes(raw)) {
-        const pat = new RegExp(cryptoTokensEscaped[i], "i");
-        const remainder = normalized.replace(pat, "");
-        parts.push(raw, remainder);
-        break; // stop at first/best match
-      }
-    }
+    // ---- General branch ----
+    const hit = cryptoTokensLower.find(
+      (t) => compact.startsWith(t) || compact.endsWith(t)
+    );
+    if (!hit) throw new Error("pairname does not contain crypto from list");
+    const other = compact.startsWith(hit)
+      ? compact.slice(hit.length)
+      : compact.slice(0, compact.length - hit.length);
+    if (!TOKENS_SET.has(other)) throw new Error("unknown quote token");
 
-    if (parts.length === 0) {
-      throw new Error("pairname does not contain crypto from list");
-    }
-
+    const parts = [hit, other];
     const ordered =
       sortOrder === "asc"
         ? parts.sort((a, b) => a.localeCompare(b))
         : parts.sort((a, b) => b.localeCompare(a));
-
     return outputFormater(ordered);
   };
 };

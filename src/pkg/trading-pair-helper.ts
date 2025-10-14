@@ -1,6 +1,12 @@
 import { CRYPTO_TOKEN, STABLE_COIN } from "../constants";
 
-const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const pairNameSanitizer = (pairName: string) =>
+  pairName
+    .trim()
+    .toLowerCase()
+    .replace(/[ \t:_\-\/]+/g, "/");
+
+const regexpEscaper = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export type PairNameFormater = (data: string[]) => string;
 
@@ -12,6 +18,13 @@ export type NormalizePairNameOptions = {
   outputFormater?: PairNameFormater;
 };
 
+export function arePairNamesSameDirection(
+  pair1: string,
+  pair2: string
+): boolean {
+  return pairNameSanitizer(pair1) === pairNameSanitizer(pair2);
+}
+
 export const normalizePairName = (
   stableCoinList = STABLE_COIN,
   cryptoList = CRYPTO_TOKEN
@@ -19,14 +32,17 @@ export const normalizePairName = (
   const stableTokensLower = Object.values(stableCoinList).map((i) =>
     i.toLowerCase()
   );
-  const stableRe = new RegExp(`(${stableTokensLower.map(esc).join("|")})`, "i");
+  const stableRe = new RegExp(
+    `(${stableTokensLower.map(regexpEscaper).join("|")})`,
+    "i"
+  );
 
   // Keep both raw-lower (for includes) and escaped (for regex)
   const cryptoTokensLower = Object.values(cryptoList)
     .map((i) => i.toLowerCase())
     .sort((a, b) => b.length - a.length); // longest-first to avoid overlaps
 
-  const cryptoTokensEscaped = cryptoTokensLower.map(esc);
+  const cryptoTokensEscaped = cryptoTokensLower.map(regexpEscaper);
 
   return (pairName: string, options?: NormalizePairNameOptions): string => {
     const {

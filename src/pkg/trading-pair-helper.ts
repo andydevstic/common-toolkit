@@ -2,10 +2,9 @@ import { CRYPTO_TOKEN, STABLE_COIN } from "../constants";
 
 const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-export type PairNameFormater = (data: string[], separator: string) => string;
+export type PairNameFormater = (data: string[]) => string;
 
-const defaultFormatter: PairNameFormater = (data, separator) =>
-  data.join(separator);
+const defaultFormatter: PairNameFormater = (data) => data.join("/");
 
 export type NormalizePairNameOptions = {
   sortOrder?: "asc" | "desc";
@@ -35,7 +34,6 @@ export const normalizePairName = (
       outputFormater = defaultFormatter,
       sortOrder = "asc",
       stableCoinRule = "last",
-      separator = "/",
     } = options || {};
 
     // strip separators and normalize case once
@@ -50,7 +48,7 @@ export const normalizePairName = (
       const ordered =
         stableCoinRule === "first" ? [stable, other] : [other, stable];
 
-      return outputFormater(ordered, separator);
+      return outputFormater(ordered);
     }
 
     // General branch
@@ -73,6 +71,6 @@ export const normalizePairName = (
         ? parts.sort((a, b) => a.localeCompare(b))
         : parts.sort((a, b) => b.localeCompare(a));
 
-    return outputFormater(ordered, separator);
+    return outputFormater(ordered);
   };
 };

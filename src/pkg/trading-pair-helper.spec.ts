@@ -117,8 +117,7 @@ describe("normalizePairName (functional factory)", () => {
     const out = normalize("WVPCUSDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "-",
-      outputFormater: (parts, sep) => parts.join(sep),
+      outputFormater: (parts) => parts.join("-"),
     });
     expect(out).to.equal("wvpc-usdt");
   });

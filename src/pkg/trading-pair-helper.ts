@@ -9,7 +9,6 @@ const defaultFormatter: PairNameFormater = (data) => data.join("/");
 export type NormalizePairNameOptions = {
   sortOrder?: "asc" | "desc";
   stableCoinRule?: "first" | "last" | "default";
-  separator?: string;
   outputFormater?: PairNameFormater;
 };
 

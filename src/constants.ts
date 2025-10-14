@@ -5,6 +5,25 @@ export enum LOG_LEVEL {
   FATAL = "fatal",
 }
 
+export enum STABLE_COIN {
+  USDT = "usdt",
+  USDV = "usdv",
+  USDC = "usdc",
+}
+
+export enum CRYPTO_TOKEN {
+  USDT = "usdt",
+  USDV = "usdv",
+  USDC = "usdc",
+  WVPC = "wvpc",
+  VPC = "vpc",
+  WOL = "wol",
+  WETH = "weth",
+  ETH = "eth",
+  BNB = "bnb",
+  WBNB = "wbnb",
+}
+
 export type HttpMethod = "get" | "post" | "put" | "patch" | "delete";
 
 export enum APP_ERROR {

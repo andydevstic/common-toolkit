@@ -11,13 +11,11 @@ describe("normalizePairName (functional factory)", () => {
     const a = normalize("USDTWVPC", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const b = normalize("WVPCUSDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     expect(a).to.equal("wvpc/usdt");
@@ -28,7 +26,6 @@ describe("normalizePairName (functional factory)", () => {
     const out = normalize("WVPCUSDC", {
       stableCoinRule: "first",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     expect(out).to.equal("usdc/wvpc");
@@ -38,13 +35,11 @@ describe("normalizePairName (functional factory)", () => {
     const outAsc = normalize("WVPCUSDT", {
       stableCoinRule: "default",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const outDesc = normalize("WVPCUSDT", {
       stableCoinRule: "default",
       sortOrder: "desc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     // asc: 'usdt' < 'wvpc' lexicographically
@@ -57,19 +52,16 @@ describe("normalizePairName (functional factory)", () => {
     const a = normalize("ETH/USDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const b = normalize("ETH|USDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const c = normalize("wVpCusdT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     expect(a).to.equal("eth/usdt");
@@ -82,13 +74,11 @@ describe("normalizePairName (functional factory)", () => {
     const outAsc = normalize("WETHETH", {
       stableCoinRule: "default",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const outDesc = normalize("WETHETH", {
       stableCoinRule: "default",
       sortOrder: "desc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     // After longest-first split → parts = ['weth','eth']; then sorted:
@@ -100,13 +90,11 @@ describe("normalizePairName (functional factory)", () => {
     const outAsc = normalize("BTCETH", {
       stableCoinRule: "default",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     const outDesc = normalize("BTCETH", {
       stableCoinRule: "default",
       sortOrder: "desc",
-      separator: "/",
       outputFormater: undefined as any,
     });
     expect(outAsc).to.equal("btc/eth");
@@ -126,7 +114,6 @@ describe("normalizePairName (functional factory)", () => {
     const out = normalize("WVPCUSDT", {
       stableCoinRule: "last",
       sortOrder: "asc",
-      separator: "/",
       outputFormater: (parts) => parts.map((p) => p.toUpperCase()).join(""),
     });
     expect(out).to.equal("WVPCUSDT");
@@ -137,7 +124,6 @@ describe("normalizePairName (functional factory)", () => {
       normalize("FOOBAR", {
         stableCoinRule: "default",
         sortOrder: "asc",
-        separator: "/",
         outputFormater: undefined as any,
       })
     ).to.throw(/does not contain crypto from list/i);

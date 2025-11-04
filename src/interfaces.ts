@@ -156,6 +156,8 @@ export interface HashCacheService {
   hincrbyfloat(key: string, field: string, value?: number): Promise<string>;
   hincrby(key: string, field: string, value?: number): Promise<number>;
   hkeys(key: string): Promise<string[]>;
+  hdel(key: string, ...fields: string[]): Promise<number>;
+  hexists(key: string, field: string): Promise<number>;
 }
 
 export interface ListCacheService {

@@ -114,6 +114,10 @@ export class RedisService
     });
   }
 
+  public async hexists(key: string, field: string): Promise<number> {
+    return this._redis.hexists(key, field);
+  }
+
   public async lpush(key: string, value: any): Promise<void> {
     await this._redis.lpush(key, value);
   }
@@ -152,6 +156,10 @@ export class RedisService
 
   public async hget(key: string, field: string): Promise<string> {
     return this._redis.hget(key, field);
+  }
+
+  public async hdel(key: string, ...fields: string[]): Promise<number> {
+    return this._redis.hdel(key, ...fields);
   }
 
   public async hincrby(key: string, field: string, value = 1): Promise<number> {

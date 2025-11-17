@@ -114,15 +114,24 @@ export const incrementAndCompareNumber = () => `
 -- KEYS[1] = key
 -- ARGV[1] = operator ("lt"|"lte"|"eq"|"gte"|"gt")
 -- ARGV[2] = number to compare against
+-- ARGV[3] = ttl seconds (optional). pass "0" or "" to skip setting TTL.
 
 local k = KEYS[1]
 local op = ARGV[1]
 local rhs = tonumber(ARGV[2])
+local ttl = tonumber(ARGV[3]) or 0
+
 if rhs == nil then
   return redis.error_reply("ERR invalid compare number: " .. tostring(ARGV[2]))
 end
 
-local lhs = redis.call("INCR", k) -- will error if existing value is non-integer
+-- increment unconditionally (will create key with value 1 if missing)
+local lhs = redis.call("INCR", k)
+
+-- if this was the first increment, set TTL if requested
+if lhs == 1 and ttl and ttl > 0 then
+  redis.call("EXPIRE", k, ttl)
+end
 
 local matched = false
 if op == "lt"      then matched = (lhs <  rhs)
@@ -135,4 +144,5 @@ else
 end
 
 return matched and 1 or 0
+
 `;

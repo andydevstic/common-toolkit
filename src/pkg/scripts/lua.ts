@@ -110,3 +110,29 @@ end
 
 return ttl                             -- unchanged TTL
 `;
+export const incrementAndCompareNumber = () => `
+-- KEYS[1] = key
+-- ARGV[1] = operator ("lt"|"lte"|"eq"|"gte"|"gt")
+-- ARGV[2] = number to compare against
+
+local k = KEYS[1]
+local op = ARGV[1]
+local rhs = tonumber(ARGV[2])
+if rhs == nil then
+  return redis.error_reply("ERR invalid compare number: " .. tostring(ARGV[2]))
+end
+
+local lhs = redis.call("INCR", k) -- will error if existing value is non-integer
+
+local matched = false
+if op == "lt"      then matched = (lhs <  rhs)
+elseif op == "lte" then matched = (lhs <= rhs)
+elseif op == "eq"  then matched = (lhs == rhs)
+elseif op == "gte" then matched = (lhs >= rhs)
+elseif op == "gt"  then matched = (lhs >  rhs)
+else
+  return redis.error_reply("ERR unknown operator: " .. tostring(op))
+end
+
+return matched and 1 or 0
+`;

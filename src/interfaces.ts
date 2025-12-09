@@ -160,6 +160,12 @@ export interface HashCacheService {
   hexists(key: string, field: string): Promise<number>;
 }
 
+export interface SetCacheService {
+  sadd(key: string, ...values: string[]): Promise<number>;
+  srem(key: string, ...values: string[]): Promise<number>;
+  scard(key: string): Promise<number>;
+}
+
 export interface ListCacheService {
   lpush(key: string, value: any): Promise<void>;
   lset(key: string, index: number, value: any): Promise<void>;

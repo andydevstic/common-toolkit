@@ -8,6 +8,7 @@ import {
   ListCacheService,
   LuaCall,
   SetCacheOption,
+  SetCacheService,
 } from "../interfaces";
 import { SET_CACHE_POLICY } from "../constants";
 
@@ -16,7 +17,8 @@ export class RedisService
     CacheService,
     HashCacheService,
     ListCacheService,
-    CacheScriptEvaluator
+    CacheScriptEvaluator,
+    SetCacheService
 {
   protected _redis: ioredis.Redis;
 
@@ -102,6 +104,18 @@ export class RedisService
 
     // unwrap the values
     return execResult.map(([, value]) => value);
+  }
+
+  public async sadd(key: string, ...values: string[]): Promise<number> {
+    return this._redis.sadd(key, ...values);
+  }
+
+  public async srem(key: string, ...values: string[]): Promise<number> {
+    return this._redis.srem(key, ...values);
+  }
+
+  public async scard(key: string): Promise<number> {
+    return this._redis.scard(key);
   }
 
   public async eval(script: string, numberOfKeys: number, ...args: any[]) {

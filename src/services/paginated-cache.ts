@@ -1,4 +1,4 @@
-import { SET_CACHE_POLICY } from "src/constants";
+import { SET_CACHE_POLICY } from "../constants";
 import {
   CacheService,
   HashCacheService,

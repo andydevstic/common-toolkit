@@ -17,3 +17,4 @@ export * as cacheHelper from "./paginated-cache-registry";
 export * as encryptionHelper from "./encryption-helper";
 export * as scripts from "./scripts";
 export * as tradingPairHelper from "./trading-pair-helper";
+export * as regexpHelper from "./regexp-helper";

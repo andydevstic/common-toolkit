@@ -69,9 +69,9 @@ export async function isReferrerValid(
   const seenMap = new Set<string>();
   seenMap.add(userCode);
 
-  let foundUser = await findUserByCode(referrerCode);
+  let upperUser = await findUserByCode(referrerCode);
 
-  if (!foundUser) {
+  if (!upperUser) {
     return {
       isValid: false,
       reason: REFERRAL_ERROR_CODE.REFERRER_NOT_FOUND,
@@ -80,26 +80,26 @@ export async function isReferrerValid(
 
   let currentLevel = 0;
 
-  while (foundUser?.referrerCode) {
+  while (upperUser?.referrerCode) {
     currentLevel++;
 
-    if (seenMap.has(foundUser.code)) {
+    if (seenMap.has(upperUser.code)) {
       return {
         isValid: false,
         reason: REFERRAL_ERROR_CODE.CIRCULAR_REFERRAL_FOUND,
       };
     }
 
-    if (options?.maxDepth && currentLevel) {
+    if (options?.maxDepth && currentLevel >= options.maxDepth) {
       return {
         isValid: false,
         reason: REFERRAL_ERROR_CODE.MAX_DEPTH_REACHED,
       };
     }
 
-    seenMap.add(foundUser.code);
+    seenMap.add(upperUser.code);
 
-    foundUser = await findUserByCode(foundUser.referrerCode);
+    upperUser = await findUserByCode(upperUser.referrerCode);
   }
 
   return {

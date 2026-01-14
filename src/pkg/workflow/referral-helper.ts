@@ -52,7 +52,7 @@ export async function isReferrerValid(
     };
   }
 
-  if (options?.maxDepth && options?.maxDepth < 1) {
+  if (options?.maxDepth !== undefined && options?.maxDepth < 1) {
     return {
       isValid: false,
       reason: REFERRAL_ERROR_CODE.INVALID_MAX_LEVEL,
